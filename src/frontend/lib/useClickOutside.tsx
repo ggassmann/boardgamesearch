@@ -1,0 +1,18 @@
+import * as React from 'react';
+import {useEffect, useRef} from 'react';
+
+export const useClickOutside = (ref: React.MutableRefObject<Node>, onClickOutside: Function) => {
+  const handleClick = (e: any) => {
+    if (ref.current.contains(e.target)) {
+      return;
+    }
+    onClickOutside();
+  }
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClick, false);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClick, false);
+    }
+  });
+};

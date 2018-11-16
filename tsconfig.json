@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "outDir": "./public/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es6",
+    "jsx": "react",
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"],
+    },
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin"
+      }
+    ]
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
