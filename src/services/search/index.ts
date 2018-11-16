@@ -18,11 +18,11 @@ const solrSearch = async (query: string) => {
   const solrQuery = [
     `${solrOrigin}boardgame/select?`,
     [
-      'boost=sum(product(suggestedRating, 10), recip(ms(NOW,yearPublished), 3.16e-11, 1, 1))',
+      'boost=sum(product(suggestedRating, 0.5), recip(ms(NOW,yearPublished), 3.16e-11, 1, 1))',
       'defType=edismax',
       `q=${query}`,
       'q.alt=*:*',
-      'qf=_text_',
+      'qf=_text_ name^15 description',
       'fq=type:boardgame',
       'fl=score,name,id,suggestedRating,thumbnail,categories',
       'facet=on',
@@ -32,8 +32,13 @@ const solrSearch = async (query: string) => {
   ].join('');
   try {
     const response = await fetch(solrQuery);
-    return await response.json();
+    const responseJson = await response.json();
+    if(responseJson.error) {
+      throw responseJson.error;
+    }
+    return responseJson;
   } catch (e) {
+    console.error(e);
     return null;
   }
 }

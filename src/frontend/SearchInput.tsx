@@ -127,6 +127,7 @@ export const SearchInput = ({setSearchInput}: ISearchInputProps) => {
           onChange={eventTargetValue(setInput)}
           onKeyDown={moveHighlight}
           onFocus={() => setStateSuggestionsHide(false)}
+          onBlur={() => setTimeout(()=>setStateSuggestionsHide(true), 100)}
           endAdornment={
             <InputAdornment position='end'>
               $

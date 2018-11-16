@@ -18,7 +18,7 @@ const Product = ({item}: IProductPropTypes) => (
       <ListItemAvatar>
         <Avatar alt='' src={item.thumbnail}/>
       </ListItemAvatar>
-      <ListItemText primary={item.name} secondary={`Rating: ${item.suggestedRating}`}/>
+      <ListItemText primary={item.name} secondary={`Rating: ${item.suggestedRating || '?'}`}/>
     </ListItem>
     <li>
       <Divider inset={true}/>
