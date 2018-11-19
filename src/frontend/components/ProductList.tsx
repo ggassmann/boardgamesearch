@@ -5,13 +5,15 @@ import { IThing } from 'src/services/IThing';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
 import { Theme } from 'src/frontend/Theme';
 import styled from 'styled-components';
+import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 
 interface IProductPropTypes {
   item: IThing;
 }
 
 interface IProductListPropTypes {
-  search?: string;
+  query?: string;
+  queryFilters?: ISearchFilter[];
 }
 
 const ProductContainer = styled.div`
@@ -35,12 +37,14 @@ const Product = ({ item }: IProductPropTypes) => (
   </ProductContainer>
 );
 
-export const ProductList = ({ search }: IProductListPropTypes) => {
-  let endpoint = `${host}:${searchPort}${searchOriginPath}search/${search}`;
-  if (search === '') {
-    endpoint = `${host}:${searchPort}${searchOriginPath}default`;
-  }
-  const [data, dataStatus] = useFetch(endpoint, { docs: [], explain: [] });
+export const ProductList = ({ query, queryFilters }: IProductListPropTypes) => {
+  let endpoint = `${host}:${searchPort}${searchOriginPath}search`;
+  const [data, dataStatus] = useFetch(endpoint, { docs: [], explain: [] }, {
+    body: {
+      query: query,
+      filters: queryFilters,
+    }
+  });
   return (
     <List>
       {dataStatus === FETCH_STATUS_FETCHING && <CircularProgress />}

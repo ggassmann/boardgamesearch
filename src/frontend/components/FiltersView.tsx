@@ -1,17 +1,19 @@
 import * as React from 'react';
-import styled from 'styled-components';
-import { Paper } from '@material-ui/core';
+import { Paper } from 'src/frontend/components/Paper';
+import { ISearchFilter } from '../lib/ISearchFilter';
 
-const FiltersViewContainer = styled(Paper)`
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-`
+interface IFiltersViewProps {
+  searchFilters: ISearchFilter[];
+}
 
-export const FiltersView = () => {
+export const FiltersView = ({searchFilters}: IFiltersViewProps) => {
   return (
-    <FiltersViewContainer>
-      Test
-    </FiltersViewContainer>
+    <Paper>
+      {searchFilters.map((filter) => (
+        <div>
+          {filter.column}: {filter.label}
+        </div>
+      ))}
+    </Paper>
   )
 }

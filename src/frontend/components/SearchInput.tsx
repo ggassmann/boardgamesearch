@@ -4,29 +4,23 @@ import { FormControl, InputLabel, Input, InputAdornment, MenuItem, Paper } from 
 import { deburr } from 'lodash';
 import * as keycode from 'keycode';
 
-import { useFetch, FETCH_STATUS_SUCCESS } from './lib/useFetch';
+import { useFetch, FETCH_STATUS_SUCCESS } from '../lib/useFetch';
 import { host, searchPort, searchOriginPath } from 'src/services/serviceorigins';
 import { eventTargetValue } from 'src/frontend/lib/eventTargetValue';
 import { useClickOutside } from 'src/frontend/lib/useClickOutside';
-
-interface ISearchFilter {
-  label: string;
-  value: string;
-  column: string;
-}
+import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 
 interface ISearchInputProps {
   searchInput: string;
-  setSearchInput: Function;
+  setSearchInput: (searchInput: string) => void;
   searchFilters: ISearchFilter[];
-  setSearchFilters: Function;
+  setSearchFilters: (searchFilters: ISearchFilter[]) => void;
 }
 
 interface ISearchSuggestionProps {
   suggestion: ISearchSuggestion;
   index: number;
   highlightedIndex: number;
-  selectedItem: string;
   onKeyDown: (event: SyntheticEvent) => any;
   selectSuggestion: () => void;
 }
@@ -36,18 +30,14 @@ interface ISearchSuggestion {
   column: string;
 }
 
-const SearchSuggestion = ({suggestion, index, highlightedIndex, selectedItem, onKeyDown, selectSuggestion}: ISearchSuggestionProps) => {
+const SearchSuggestion = ({suggestion, index, highlightedIndex, onKeyDown, selectSuggestion}: ISearchSuggestionProps) => {
   const isHighlighted = highlightedIndex === index;
-  const isSelected = false;/*(selectedItem || '').indexOf(suggestion) > -1*/
 
   return (
     <MenuItem
       key={`${suggestion.label}${suggestion.column}`}
       selected={isHighlighted}
       component="div"
-      style={{
-        fontWeight: isSelected ? 500 : 400,
-      }}
       onKeyDown={onKeyDown}
       onClick={selectSuggestion}
     >
@@ -74,10 +64,9 @@ const getSuggestions = (suggestions: ISearchSuggestion[], value: string): ISearc
   );
 }
 
-export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
+export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, searchFilters}: ISearchInputProps) => {
   const [facets, facetsFetchState] = useFetch(`${host}:${searchPort}${searchOriginPath}facets`, { fields: {} });
-  const [stateSearchInput, setStateSearchInput] = useState('');
-  const [stateSelectedItem, setStateSelectedItem] = useState(null);
+  const [autocompleteOptions, setAuctocompleteOptions] = useState([]);
   const [stateHighlightedIndex, setStateHighlightedIndex] = useState(0);
   const [stateSuggestions, setStateSuggestions] = useState([]);
   const [stateSuggestionsHide, setStateSuggestionsHide] = useState(false);
@@ -88,24 +77,26 @@ export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
     setStateSuggestionsHide(true);
   });
 
-  let autocompleteOptions: ISearchSuggestion[] = [];
-  if(facetsFetchState === FETCH_STATUS_SUCCESS) {
-    autocompleteOptions = [].concat(
-      ...Object.keys(facets.fields)
-        .map(
-          (fieldColumn) =>
-            facets.fields[fieldColumn]
-              .filter(
-                (f:any, fIndex:number) => fIndex % 2 === 0
-              )
-              .map((fieldItem: string) => ({label: fieldItem, column: fieldColumn}))
-        )
-    );
+  if(autocompleteOptions.length === 0 && facetsFetchState === FETCH_STATUS_SUCCESS) {
+    let autocompleteOptions: ISearchSuggestion[] = [];
+    if(facetsFetchState === FETCH_STATUS_SUCCESS) {
+      autocompleteOptions = [].concat(
+        ...Object.keys(facets.fields)
+          .map(
+            (fieldColumn) =>
+              facets.fields[fieldColumn]
+                .filter(
+                  (f:any, fIndex:number) => fIndex % 2 === 0
+                )
+                .map((fieldItem: string) => ({label: fieldItem, column: fieldColumn}))
+          )
+      );
+      setAuctocompleteOptions(autocompleteOptions);
+    }
   }
 
   const setInput = (e: string) => {
     setSearchInput(e);
-    setStateSearchInput(e);
     setStateHighlightedIndex(0);
     setStateSuggestions(getSuggestions(autocompleteOptions, e));
     if (stateSuggestionsHide) {
@@ -114,22 +105,33 @@ export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
   }
 
   const moveHighlight = (e: SyntheticEvent) => {
+    const suggestions = getSuggestions(autocompleteOptions, searchInput);
     if (keycode(e.nativeEvent) === 'down') {
-      setStateHighlightedIndex(stateHighlightedIndex + 1);
+      setStateHighlightedIndex(Math.min(suggestions.length - 1, stateHighlightedIndex + 1));
       e.preventDefault();
     }
     if (keycode(e.nativeEvent) === 'up') {
-      setStateHighlightedIndex(stateHighlightedIndex - 1);
+      setStateHighlightedIndex(Math.max(0, stateHighlightedIndex - 1));
       e.preventDefault();
     }
     if (keycode(e.nativeEvent) === 'enter') {
-      console.log(stateSuggestions[stateHighlightedIndex]);
+      const selectedSuggestion = suggestions[stateHighlightedIndex];
+      selectSuggestion(selectedSuggestion)
       e.preventDefault();
     }
   }
 
   const selectSuggestion = (suggestion: ISearchSuggestion) => {
-    setInput(suggestion.label);
+    const selectedFilter:ISearchFilter = {
+      label: suggestion.label,
+      column: suggestion.column,
+      value: suggestion.label,
+    };
+    setSearchFilters([
+      ...searchFilters,
+      selectedFilter
+    ])
+    setInput('');
     setStateSuggestionsHide(true);
   }
 
@@ -140,7 +142,7 @@ export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
         <Input
           id='adornment-password'
           type={'text'}
-          value={stateSearchInput}
+          value={searchInput}
           onChange={eventTargetValue(setInput)}
           onKeyDown={moveHighlight}
           onFocus={() => setStateSuggestionsHide(false)}
@@ -165,7 +167,6 @@ export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
                 index={index}
                 key={`${suggestion.label}&${suggestion.column}`}
                 highlightedIndex={stateHighlightedIndex}
-                selectedItem={stateSelectedItem}
                 onKeyDown={moveHighlight}
                 selectSuggestion={() => selectSuggestion(suggestion)}
               />

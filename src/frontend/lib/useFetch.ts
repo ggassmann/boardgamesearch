@@ -7,7 +7,7 @@ export const FETCH_STATUS_UNINITIALIZED = 0;
 export const FETCH_STATUS_FETCHING = 1;
 export const FETCH_STATUS_SUCCESS = 2;
 
-export const useFetch = (endpoint: string, startingValue: any) => {
+export const useFetch = (endpoint: string, startingValue: any, options: any = {}) => {
   const [stateEndpoint, setStateEndpoint] = useState(null);
   const [stateStatus, setStateStatus] = useState(FETCH_STATUS_UNINITIALIZED);
   const [stateFetchAbortController, setStateFetchAbortController] = useState(null);
@@ -26,7 +26,26 @@ export const useFetch = (endpoint: string, startingValue: any) => {
 
     setStateFetchAbortController(controller);
 
-    fetch(`${endpoint}`, { signal }).then(async (response) => {
+    if(options.body) {
+      options = Object.assign(
+        {},
+        {
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: 'same-origin',
+        },
+        options, 
+        {
+          body: JSON.stringify(options.body)
+        }
+      );
+    }
+
+    const fetchOptions = Object.assign({}, options, {signal});
+
+    fetch(`${endpoint}`, fetchOptions).then(async (response) => {
       const data = await response.json();
       setStateResponse(data);
       setStateStatus(FETCH_STATUS_SUCCESS);

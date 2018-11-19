@@ -1,5 +1,3 @@
-import {Grid, Paper} from '@material-ui/core';
-import { Grid } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import IconButton from '@material-ui/core/IconButton';
@@ -9,8 +7,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-import { ProductList } from 'src/frontend/ProductList';
-import { SearchInput } from 'src/frontend/SearchInput';
+import { SearchInput } from 'src/frontend/components/SearchInput';
 import { ProductPageLoadable } from 'src/frontend/routes/ProductPage/ProductPageLoadable';
 import IndexPage from 'src/frontend/routes/IndexPage/IndexPage';
 
@@ -35,17 +32,9 @@ export const App = () => {
           />
         </Toolbar>
       </AppBar>
-      <Grid container={true}>
-        <Grid>
-          <Paper>
-            Test
-          </Paper>
-        </Grid>
-        <ProductList search={stateSearchInput}/>
-      </Grid>
       <BrowserRouter>
         <Switch>
-          <Route exact path='/' component={() => <IndexPage headerSearch={stateSearchInput} />} />
+          <Route exact path='/' component={() => <IndexPage headerSearch={stateSearchInput} headerSearchFilters={stateSearchFilters}/>} />
           <Route exact path='/item/:itemid' component={ProductPageLoadable} />
         </Switch>
       </BrowserRouter>
