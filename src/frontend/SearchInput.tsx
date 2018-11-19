@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {useState, SyntheticEvent} from 'react';
+import { useState, SyntheticEvent } from 'react';
 import { FormControl, InputLabel, Input, InputAdornment, MenuItem, Paper } from '@material-ui/core';
-import {deburr} from 'lodash';
+import { deburr } from 'lodash';
 import * as keycode from 'keycode';
 
-import { useFetch, FETCH_STATUS_SUCCESS } from './useFetch';
+import { useFetch, FETCH_STATUS_SUCCESS } from './lib/useFetch';
 import { host, searchPort, searchOriginPath } from 'src/services/serviceorigins';
 import { eventTargetValue } from 'src/frontend/lib/eventTargetValue';
 import { useClickOutside } from 'src/frontend/lib/useClickOutside';
@@ -22,7 +22,7 @@ interface ISearchSuggestionProps {
   selectSuggestion: () => void;
 }
 
-const SearchSuggestion = ({suggestion, index, highlightedIndex, selectedItem, onKeyDown, selectSuggestion}: ISearchSuggestionProps) => {
+const SearchSuggestion = ({ suggestion, index, highlightedIndex, selectedItem, onKeyDown, selectSuggestion }: ISearchSuggestionProps) => {
   const isHighlighted = highlightedIndex === index;
   const isSelected = (selectedItem || '').indexOf(suggestion) > -1;
 
@@ -60,8 +60,8 @@ const getSuggestions = (suggestions: string[], value: string) => {
   );
 }
 
-export const SearchInput = ({setSearchInput}: ISearchInputProps) => {
-  const [facets, facetsFetchState] = useFetch(`${host}:${searchPort}${searchOriginPath}facets`, {fields: {}});
+export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
+  const [facets, facetsFetchState] = useFetch(`${host}:${searchPort}${searchOriginPath}facets`, { fields: {} });
   const [stateSearchInput, setStateSearchInput] = useState('');
   const [stateSelectedItem, setStateSelectedItem] = useState(null);
   const [stateHighlightedIndex, setStateHighlightedIndex] = useState(0);
@@ -75,12 +75,12 @@ export const SearchInput = ({setSearchInput}: ISearchInputProps) => {
   });
 
   let autocompleteOptions: string[] = [];
-  if(facetsFetchState === FETCH_STATUS_SUCCESS) {
+  if (facetsFetchState === FETCH_STATUS_SUCCESS) {
     autocompleteOptions = [].concat(
       ...Object.keys(facets.fields)
         .map(
           (fieldColumn) => facets.fields[fieldColumn].filter(
-            (f:any, fIndex:number) => fIndex % 2 === 0
+            (f: any, fIndex: number) => fIndex % 2 === 0
           )
         )
     );
@@ -91,21 +91,21 @@ export const SearchInput = ({setSearchInput}: ISearchInputProps) => {
     setStateSearchInput(e);
     setStateHighlightedIndex(0);
     setStateSuggestions(getSuggestions(autocompleteOptions, e));
-    if(stateSuggestionsHide) {
+    if (stateSuggestionsHide) {
       setStateSuggestionsHide(false);
     }
   }
 
   const moveHighlight = (e: SyntheticEvent) => {
-    if(keycode(e.nativeEvent) === 'down') {
+    if (keycode(e.nativeEvent) === 'down') {
       setStateHighlightedIndex(stateHighlightedIndex + 1);
       e.preventDefault();
     }
-    if(keycode(e.nativeEvent) === 'up') {
+    if (keycode(e.nativeEvent) === 'up') {
       setStateHighlightedIndex(stateHighlightedIndex - 1);
       e.preventDefault();
     }
-    if(keycode(e.nativeEvent) === 'enter') {
+    if (keycode(e.nativeEvent) === 'enter') {
       console.log(stateSuggestions[stateHighlightedIndex]);
       e.preventDefault();
     }
@@ -127,7 +127,7 @@ export const SearchInput = ({setSearchInput}: ISearchInputProps) => {
           onChange={eventTargetValue(setInput)}
           onKeyDown={moveHighlight}
           onFocus={() => setStateSuggestionsHide(false)}
-          onBlur={() => setTimeout(()=>setStateSuggestionsHide(true), 100)}
+          onBlur={() => setTimeout(() => setStateSuggestionsHide(true), 100)}
           endAdornment={
             <InputAdornment position='end'>
               $

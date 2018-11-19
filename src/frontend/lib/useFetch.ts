@@ -1,7 +1,7 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {host, searchOriginPath, searchPort} from 'src/services/serviceorigins';
-import { useClickOutside } from './lib/useClickOutside';
+import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
+import { useClickOutside } from './useClickOutside';
 
 export const FETCH_STATUS_UNINITIALIZED = 0;
 export const FETCH_STATUS_FETCHING = 1;
@@ -17,7 +17,7 @@ export const useFetch = (endpoint: string, startingValue: any) => {
     setStateEndpoint(endpoint);
     setStateStatus(FETCH_STATUS_FETCHING);
 
-    if(stateFetchAbortController) {
+    if (stateFetchAbortController) {
       stateFetchAbortController.abort();
     }
 
@@ -26,7 +26,7 @@ export const useFetch = (endpoint: string, startingValue: any) => {
 
     setStateFetchAbortController(controller);
 
-    fetch(`${endpoint}`, {signal}).then(async (response) => {
+    fetch(`${endpoint}`, { signal }).then(async (response) => {
       const data = await response.json();
       setStateResponse(data);
       setStateStatus(FETCH_STATUS_SUCCESS);
