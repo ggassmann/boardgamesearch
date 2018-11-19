@@ -31,7 +31,7 @@ const solrSearch = async (query: string, filters: ISearchFilter[] = []) => {
       'facet=on',
       'facet.limit=-1',
       ...facets.map((field) => `facet.field=${field}`),
-      ...filters.map((filter) => `fq=${filter.column}:${filter.value}`),
+      ...filters.map((filter) => `fq=${filter.column}:"${filter.value}"`),
       'debugQuery=on',
     ].join('&'),
   ].join('');
