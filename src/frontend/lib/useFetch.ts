@@ -26,20 +26,20 @@ export const useFetch = (endpoint: string, startingValue: any, options: any = {}
 
     setStateFetchAbortController(controller);
 
-    if(options.body) {
+    if (options.body) {
       options = Object.assign(
         {},
         {
           method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           credentials: 'same-origin',
         },
-        options, 
+        options,
         {
-          body: JSON.stringify(options.body)
-        }
+          body: JSON.stringify(options.body),
+        },
       );
     }
 

@@ -1,11 +1,11 @@
 import { Avatar, CircularProgress, Divider, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
 import * as React from 'react';
+import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { FETCH_STATUS_FETCHING, useFetch } from 'src/frontend/lib/useFetch';
+import { Theme } from 'src/frontend/Theme';
 import { IThing } from 'src/services/IThing';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
-import { Theme } from 'src/frontend/Theme';
 import styled from 'styled-components';
-import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 
 interface IProductPropTypes {
   item: IThing;
@@ -38,12 +38,12 @@ const Product = ({ item }: IProductPropTypes) => (
 );
 
 export const ProductList = ({ query, queryFilters }: IProductListPropTypes) => {
-  let endpoint = `${host}:${searchPort}${searchOriginPath}search`;
+  const endpoint = `${host}:${searchPort}${searchOriginPath}search`;
   const [data, dataStatus] = useFetch(endpoint, { docs: [], explain: [] }, {
     body: {
-      query: query,
+      query,
       filters: queryFilters,
-    }
+    },
   });
   return (
     <List>

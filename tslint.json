@@ -3,6 +3,7 @@
   "rules": {
     "object-literal-sort-keys": false,
     "quotemark": [true, "single", "avoid-escape", "avoid-template"],
-    "no-multiline-jsx": false,
+    "jsx-no-multiline-js": false,
+    "jsx-no-lambda": false
   }
 }

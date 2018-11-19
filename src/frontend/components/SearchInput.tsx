@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { useState, SyntheticEvent } from 'react';
-import { FormControl, InputLabel, Input, InputAdornment, MenuItem, Paper } from '@material-ui/core';
-import { deburr } from 'lodash';
+import { FormControl, Input, InputAdornment, InputLabel, MenuItem, Paper } from '@material-ui/core';
 import * as keycode from 'keycode';
+import { deburr } from 'lodash';
+import * as React from 'react';
+import { SyntheticEvent, useState } from 'react';
 
-import { useFetch, FETCH_STATUS_SUCCESS } from '../lib/useFetch';
-import { host, searchPort, searchOriginPath } from 'src/services/serviceorigins';
 import { eventTargetValue } from 'src/frontend/lib/eventTargetValue';
-import { useClickOutside } from 'src/frontend/lib/useClickOutside';
 import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
+import { useClickOutside } from 'src/frontend/lib/useClickOutside';
+import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
+import { FETCH_STATUS_SUCCESS, useFetch } from '../lib/useFetch';
 
 interface ISearchInputProps {
   searchInput: string;
@@ -30,21 +30,23 @@ interface ISearchSuggestion {
   column: string;
 }
 
-const SearchSuggestion = ({suggestion, index, highlightedIndex, onKeyDown, selectSuggestion}: ISearchSuggestionProps) => {
+const SearchSuggestion = ({
+  suggestion, index, highlightedIndex, onKeyDown, selectSuggestion,
+}: ISearchSuggestionProps) => {
   const isHighlighted = highlightedIndex === index;
 
   return (
     <MenuItem
       key={`${suggestion.label}${suggestion.column}`}
       selected={isHighlighted}
-      component="div"
+      component='div'
       onKeyDown={onKeyDown}
       onClick={selectSuggestion}
     >
       {suggestion.label}
     </MenuItem>
   );
-}
+};
 
 const getSuggestions = (suggestions: ISearchSuggestion[], value: string): ISearchSuggestion[] => {
   const inputValue = deburr(value.trim()).toLowerCase();
@@ -52,7 +54,7 @@ const getSuggestions = (suggestions: ISearchSuggestion[], value: string): ISearc
   let count = 0;
 
   return inputLength === 0 ? ([]) : (
-    suggestions.filter(suggestion => {
+    suggestions.filter((suggestion) => {
       const keep = count < 7 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
 
       if (keep) {
@@ -62,7 +64,7 @@ const getSuggestions = (suggestions: ISearchSuggestion[], value: string): ISearc
       return keep;
     })
   );
-}
+};
 
 export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, searchFilters}: ISearchInputProps) => {
   const [facets, facetsFetchState] = useFetch(`${host}:${searchPort}${searchOriginPath}facets`, { fields: {} });
@@ -77,21 +79,21 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
     setStateSuggestionsHide(true);
   });
 
-  if(autocompleteOptions.length === 0 && facetsFetchState === FETCH_STATUS_SUCCESS) {
-    let autocompleteOptions: ISearchSuggestion[] = [];
-    if(facetsFetchState === FETCH_STATUS_SUCCESS) {
-      autocompleteOptions = [].concat(
+  if (autocompleteOptions.length === 0 && facetsFetchState === FETCH_STATUS_SUCCESS) {
+    let newAutocompleteOptions = [];
+    if (facetsFetchState === FETCH_STATUS_SUCCESS) {
+      newAutocompleteOptions = [].concat(
         ...Object.keys(facets.fields)
           .map(
             (fieldColumn) =>
               facets.fields[fieldColumn]
                 .filter(
-                  (f:any, fIndex:number) => fIndex % 2 === 0
+                  (f: any, fIndex: number) => fIndex % 2 === 0,
                 )
-                .map((fieldItem: string) => ({label: fieldItem, column: fieldColumn}))
-          )
+                .map((fieldItem: string) => ({label: fieldItem, column: fieldColumn})),
+          ),
       );
-      setAuctocompleteOptions(autocompleteOptions);
+      setAuctocompleteOptions(newAutocompleteOptions);
     }
   }
 
@@ -102,7 +104,7 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
     if (stateSuggestionsHide) {
       setStateSuggestionsHide(false);
     }
-  }
+  };
 
   const moveHighlight = (e: SyntheticEvent) => {
     const suggestions = getSuggestions(autocompleteOptions, searchInput);
@@ -116,24 +118,24 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
     }
     if (keycode(e.nativeEvent) === 'enter') {
       const selectedSuggestion = suggestions[stateHighlightedIndex];
-      selectSuggestion(selectedSuggestion)
+      selectSuggestion(selectedSuggestion);
       e.preventDefault();
     }
-  }
+  };
 
   const selectSuggestion = (suggestion: ISearchSuggestion) => {
-    const selectedFilter:ISearchFilter = {
+    const selectedFilter: ISearchFilter = {
       label: suggestion.label,
       column: suggestion.column,
       value: suggestion.label,
     };
     setSearchFilters([
       ...searchFilters,
-      selectedFilter
-    ])
+      selectedFilter,
+    ]);
     setInput('');
     setStateSuggestionsHide(true);
-  }
+  };
 
   return (
     <div ref={clickOutsideRef}>
@@ -154,13 +156,17 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
           }
         />
         {!stateSuggestionsHide &&
-          <Paper square style={{
-            position: 'absolute',
-            zIndex: 1,
-            marginTop: '3.3rem',
-            left: 0,
-            right: 0,
-          }} onKeyDown={moveHighlight}>
+          <Paper
+            square={true}
+            style={{
+              position: 'absolute',
+              zIndex: 1,
+              marginTop: '3.3rem',
+              left: 0,
+              right: 0,
+            }}
+            onKeyDown={moveHighlight}
+          >
             {stateSuggestions.map((suggestion, index) =>
               <SearchSuggestion
                 suggestion={suggestion}
@@ -169,11 +175,11 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
                 highlightedIndex={stateHighlightedIndex}
                 onKeyDown={moveHighlight}
                 selectSuggestion={() => selectSuggestion(suggestion)}
-              />
+              />,
             )}
           </Paper>
         }
       </FormControl>
     </div>
-  )
-}
+  );
+};

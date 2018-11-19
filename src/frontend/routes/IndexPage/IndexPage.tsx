@@ -1,12 +1,12 @@
-import * as React from 'react';
 import { Grid } from '@material-ui/core';
-import { ProductList } from 'src/frontend/components/ProductList';
+import * as React from 'react';
 import { FiltersView } from 'src/frontend/components/FiltersView';
+import { ProductList } from 'src/frontend/components/ProductList';
 import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 
 interface IIndexPageProps {
   headerSearch: string;
-  headerSearchFilters: ISearchFilter[],
+  headerSearchFilters: ISearchFilter[];
 }
 
 export default ({ headerSearch, headerSearchFilters}: IIndexPageProps) => {
@@ -17,5 +17,5 @@ export default ({ headerSearch, headerSearchFilters}: IIndexPageProps) => {
       </Grid>
       <ProductList query={headerSearch} queryFilters={headerSearchFilters}/>
     </Grid>
-  )
-}
+  );
+};

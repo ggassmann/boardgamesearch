@@ -1,12 +1,12 @@
 import '@babel/polyfill';
+import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as express from 'express';
 import fetch from 'node-fetch';
+import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import {log} from 'src/services/log';
 import {searchOriginPath, searchPort as port} from 'src/services/serviceorigins';
 import {origin as solrOrigin} from 'src/services/solr';
-import * as bodyParser from 'body-parser';
-import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 
 const app = express();
 
@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
-const facets = ['categories','families','designers','publishers','mechanics','artists'];
+const facets = ['categories', 'families', 'designers', 'publishers', 'mechanics', 'artists'];
 
 const solrSearch = async (query: string, filters: ISearchFilter[] = []) => {
   const solrQuery = [
@@ -35,25 +35,24 @@ const solrSearch = async (query: string, filters: ISearchFilter[] = []) => {
       'debugQuery=on',
     ].join('&'),
   ].join('');
-  console.log(solrQuery);
   try {
     const response = await fetch(solrQuery);
     const responseJson = await response.json();
-    if(responseJson.error) {
+    if (responseJson.error) {
       throw responseJson.error;
     }
     return responseJson;
   } catch (e) {
-    console.error(e);
+    log(e);
     return null;
   }
-}
+};
 
 app.get(`${searchOriginPath}facets`, async (req, res) => {
   const solrQuery = [
     `${solrOrigin}boardgame/select?`,
     [
-      `q=*.*`,
+      'q=*.*',
       'facet=on',
       'facet.limit=-1',
       'rows=0',
@@ -69,14 +68,14 @@ app.get(`${searchOriginPath}facets`, async (req, res) => {
   } catch (e) {
     res.send(500);
   }
-})
+});
 app.post(`${searchOriginPath}search`, async (req, res) => {
   const data = await solrSearch(req.body.query, req.body.filters);
   res.send({
     docs: data.response.docs,
     _solr: data,
-    success: true
+    success: true,
   });
-})
+});
 
 app.listen(port, () => log(`Example app listening on port ${port}!`));

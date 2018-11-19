@@ -15,5 +15,5 @@ export const FiltersView = ({searchFilters}: IFiltersViewProps) => {
         </div>
       ))}
     </Paper>
-  )
-}
+  );
+};
