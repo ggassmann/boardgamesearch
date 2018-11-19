@@ -1,3 +1,4 @@
+import {Grid, Paper} from '@material-ui/core';
 import { Grid } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -15,6 +16,7 @@ import IndexPage from 'src/frontend/routes/IndexPage/IndexPage';
 
 export const App = () => {
   const [stateSearchInput, setStateSearchInput] = useState('');
+  const [stateSearchFilters, setStateSearchFilters] = useState([]);
 
   return (
     <>
@@ -25,9 +27,22 @@ export const App = () => {
           <Typography variant='h6' color='inherit' style={{ flexGrow: 1 }}>
             Board Game Search
           </Typography>
-          <SearchInput setSearchInput={setStateSearchInput} />
+          <SearchInput
+            searchInput={stateSearchInput}
+            setSearchInput={setStateSearchInput}
+            searchFilters={stateSearchFilters}
+            setSearchFilters={setStateSearchFilters}
+          />
         </Toolbar>
       </AppBar>
+      <Grid container={true}>
+        <Grid>
+          <Paper>
+            Test
+          </Paper>
+        </Grid>
+        <ProductList search={stateSearchInput}/>
+      </Grid>
       <BrowserRouter>
         <Switch>
           <Route exact path='/' component={() => <IndexPage headerSearch={stateSearchInput} />} />

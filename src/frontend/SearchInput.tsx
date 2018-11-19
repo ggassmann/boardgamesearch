@@ -9,12 +9,21 @@ import { host, searchPort, searchOriginPath } from 'src/services/serviceorigins'
 import { eventTargetValue } from 'src/frontend/lib/eventTargetValue';
 import { useClickOutside } from 'src/frontend/lib/useClickOutside';
 
+interface ISearchFilter {
+  label: string;
+  value: string;
+  column: string;
+}
+
 interface ISearchInputProps {
+  searchInput: string;
   setSearchInput: Function;
+  searchFilters: ISearchFilter[];
+  setSearchFilters: Function;
 }
 
 interface ISearchSuggestionProps {
-  suggestion: string;
+  suggestion: ISearchSuggestion;
   index: number;
   highlightedIndex: number;
   selectedItem: string;
@@ -22,13 +31,18 @@ interface ISearchSuggestionProps {
   selectSuggestion: () => void;
 }
 
-const SearchSuggestion = ({ suggestion, index, highlightedIndex, selectedItem, onKeyDown, selectSuggestion }: ISearchSuggestionProps) => {
+interface ISearchSuggestion {
+  label: string;
+  column: string;
+}
+
+const SearchSuggestion = ({suggestion, index, highlightedIndex, selectedItem, onKeyDown, selectSuggestion}: ISearchSuggestionProps) => {
   const isHighlighted = highlightedIndex === index;
-  const isSelected = (selectedItem || '').indexOf(suggestion) > -1;
+  const isSelected = false;/*(selectedItem || '').indexOf(suggestion) > -1*/
 
   return (
     <MenuItem
-      key={suggestion}
+      key={`${suggestion.label}${suggestion.column}`}
       selected={isHighlighted}
       component="div"
       style={{
@@ -37,19 +51,19 @@ const SearchSuggestion = ({ suggestion, index, highlightedIndex, selectedItem, o
       onKeyDown={onKeyDown}
       onClick={selectSuggestion}
     >
-      {suggestion}
+      {suggestion.label}
     </MenuItem>
   );
 }
 
-const getSuggestions = (suggestions: string[], value: string) => {
+const getSuggestions = (suggestions: ISearchSuggestion[], value: string): ISearchSuggestion[] => {
   const inputValue = deburr(value.trim()).toLowerCase();
   const inputLength = inputValue.length;
   let count = 0;
 
   return inputLength === 0 ? ([]) : (
     suggestions.filter(suggestion => {
-      const keep = count < 7 && suggestion.slice(0, inputLength).toLowerCase() === inputValue;
+      const keep = count < 7 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
 
       if (keep) {
         count += 1;
@@ -74,14 +88,17 @@ export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
     setStateSuggestionsHide(true);
   });
 
-  let autocompleteOptions: string[] = [];
-  if (facetsFetchState === FETCH_STATUS_SUCCESS) {
+  let autocompleteOptions: ISearchSuggestion[] = [];
+  if(facetsFetchState === FETCH_STATUS_SUCCESS) {
     autocompleteOptions = [].concat(
       ...Object.keys(facets.fields)
         .map(
-          (fieldColumn) => facets.fields[fieldColumn].filter(
-            (f: any, fIndex: number) => fIndex % 2 === 0
-          )
+          (fieldColumn) =>
+            facets.fields[fieldColumn]
+              .filter(
+                (f:any, fIndex:number) => fIndex % 2 === 0
+              )
+              .map((fieldItem: string) => ({label: fieldItem, column: fieldColumn}))
         )
     );
   }
@@ -111,8 +128,8 @@ export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
     }
   }
 
-  const selectSuggestion = (suggestion: string) => {
-    setInput(suggestion);
+  const selectSuggestion = (suggestion: ISearchSuggestion) => {
+    setInput(suggestion.label);
     setStateSuggestionsHide(true);
   }
 
@@ -146,7 +163,7 @@ export const SearchInput = ({ setSearchInput }: ISearchInputProps) => {
               <SearchSuggestion
                 suggestion={suggestion}
                 index={index}
-                key={suggestion}
+                key={`${suggestion.label}&${suggestion.column}`}
                 highlightedIndex={stateHighlightedIndex}
                 selectedItem={stateSelectedItem}
                 onKeyDown={moveHighlight}
