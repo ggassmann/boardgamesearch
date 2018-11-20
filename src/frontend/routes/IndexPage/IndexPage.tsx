@@ -1,4 +1,3 @@
-import { Grid } from '@material-ui/core';
 import * as React from 'react';
 import { FiltersView } from 'src/frontend/components/FiltersView';
 import { ProductList } from 'src/frontend/components/ProductList';
@@ -11,11 +10,9 @@ interface IIndexPageProps {
 
 export default ({ headerSearch, headerSearchFilters}: IIndexPageProps) => {
   return (
-    <Grid container={true} direction='column'>
-      <Grid alignContent='center'>
-        <FiltersView searchFilters={headerSearchFilters}/>
-      </Grid>
+    <>
+      <FiltersView searchFilters={headerSearchFilters}/>
       <ProductList query={headerSearch} queryFilters={headerSearchFilters}/>
-    </Grid>
+    </>
   );
 };

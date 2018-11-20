@@ -1,4 +1,3 @@
-import { FormControl, Input, InputAdornment, InputLabel, MenuItem, Paper } from '@material-ui/core';
 import * as keycode from 'keycode';
 import { deburr } from 'lodash';
 import * as React from 'react';
@@ -9,6 +8,8 @@ import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { useClickOutside } from 'src/frontend/lib/useClickOutside';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
 import { FETCH_STATUS_SUCCESS, useFetch } from '../lib/useFetch';
+import { TextField, TextFieldInput, TextFieldLabel } from './InputField';
+import { Paper } from './Paper';
 
 interface ISearchInputProps {
   searchInput: string;
@@ -36,15 +37,13 @@ const SearchSuggestion = ({
   const isHighlighted = highlightedIndex === index;
 
   return (
-    <MenuItem
+    <div
       key={`${suggestion.label}${suggestion.column}`}
-      selected={isHighlighted}
-      component='div'
       onKeyDown={onKeyDown}
       onClick={selectSuggestion}
     >
       {suggestion.label}
-    </MenuItem>
+    </div>
   );
 };
 
@@ -138,48 +137,33 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
   };
 
   return (
-    <div ref={clickOutsideRef}>
-      <FormControl>
-        <InputLabel htmlFor='adornment-password'>Search</InputLabel>
-        <Input
-          id='adornment-password'
-          type={'text'}
-          value={searchInput}
-          onChange={eventTargetValue(setInput)}
+    <TextField outlined={true} ref={clickOutsideRef}>
+      <TextFieldInput
+        id='search-query-header'
+        type='text'
+        value={searchInput}
+        onChange={eventTargetValue(setInput)}
+        onKeyDown={moveHighlight}
+        onFocus={() => setStateSuggestionsHide(false)}
+        onBlur={() => setTimeout(() => setStateSuggestionsHide(true), 100)}
+      />
+      <TextFieldLabel htmlFor='search-query-header'>Search</TextFieldLabel>
+      {!stateSuggestionsHide &&
+        <Paper
           onKeyDown={moveHighlight}
-          onFocus={() => setStateSuggestionsHide(false)}
-          onBlur={() => setTimeout(() => setStateSuggestionsHide(true), 100)}
-          endAdornment={
-            <InputAdornment position='end'>
-              $
-            </InputAdornment>
-          }
-        />
-        {!stateSuggestionsHide &&
-          <Paper
-            square={true}
-            style={{
-              position: 'absolute',
-              zIndex: 1,
-              marginTop: '3.3rem',
-              left: 0,
-              right: 0,
-            }}
-            onKeyDown={moveHighlight}
-          >
-            {stateSuggestions.map((suggestion, index) =>
-              <SearchSuggestion
-                suggestion={suggestion}
-                index={index}
-                key={`${suggestion.label}&${suggestion.column}`}
-                highlightedIndex={stateHighlightedIndex}
-                onKeyDown={moveHighlight}
-                selectSuggestion={() => selectSuggestion(suggestion)}
-              />,
-            )}
-          </Paper>
-        }
-      </FormControl>
-    </div>
+        >
+          {stateSuggestions.map((suggestion, index) =>
+            <SearchSuggestion
+              suggestion={suggestion}
+              index={index}
+              key={`${suggestion.label}&${suggestion.column}`}
+              highlightedIndex={stateHighlightedIndex}
+              onKeyDown={moveHighlight}
+              selectSuggestion={() => selectSuggestion(suggestion)}
+            />,
+          )}
+        </Paper>
+      }
+    </TextField>
   );
 };

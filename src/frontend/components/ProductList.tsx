@@ -1,11 +1,13 @@
-import { Avatar, CircularProgress, Divider, List, ListItem, ListItemAvatar, ListItemText } from '@material-ui/core';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
+import slugify from 'slugify';
 import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { FETCH_STATUS_FETCHING, useFetch } from 'src/frontend/lib/useFetch';
-import { Theme } from 'src/frontend/Theme';
 import { IThing } from 'src/services/IThing';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
 import styled from 'styled-components';
+import { getColor } from '../Theme';
+import { dp1 } from './Elevation';
 
 interface IProductPropTypes {
   item: IThing;
@@ -16,23 +18,26 @@ interface IProductListPropTypes {
   queryFilters?: ISearchFilter[];
 }
 
-const ProductContainer = styled.div`
-  background-color: ${Theme.selectableBackgroundColor};
+const ProductContainer = styled(Link)`
+  ${dp1}
+  background-color: ${getColor({type: 'background', color: 'neutral'})};
+  text-decoration: none;
+  display: block;
+
   &:hover {
-    background-color: ${Theme.selectableBackgroundColorHovered};
+    background-color: ${getColor({type: 'background', color: 'neutral', brightness: 'slightdark'})};
   }
 `;
 
 const Product = ({ item }: IProductPropTypes) => (
-  <ProductContainer>
-    <ListItem>
-      <ListItemAvatar>
-        <Avatar alt='' src={item.thumbnail} />
-      </ListItemAvatar>
-      <ListItemText primary={item.name} secondary={`Rating: ${item.suggestedRating || '?'}`} />
-    </ListItem>
+  <ProductContainer to={`/item/${slugify(item.name).toLowerCase()}`}>
     <li>
-      <Divider inset={true} />
+      <img src={item.thumbnail} alt=''/>
+      <h3>{item.name}</h3>
+      <p>Rating: {item.suggestedRating || '?'}</p>
+    </li>
+    <li>
+      <hr/>
     </li>
   </ProductContainer>
 );
@@ -46,9 +51,9 @@ export const ProductList = ({ query, queryFilters }: IProductListPropTypes) => {
     },
   });
   return (
-    <List>
-      {dataStatus === FETCH_STATUS_FETCHING && <CircularProgress />}
+    <ul>
+      {dataStatus === FETCH_STATUS_FETCHING && <div/>}
       {data.docs.map((item: IThing) => <Product key={item.id} item={item} />)}
-    </List>
+    </ul>
   );
 };

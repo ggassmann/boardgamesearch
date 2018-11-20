@@ -100,6 +100,7 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
   ],
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'public/frontend')
+    path: path.resolve(__dirname, 'public/frontend/'),
+    publicPath: '/',
   }
 };
