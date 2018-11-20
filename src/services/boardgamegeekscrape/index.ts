@@ -131,9 +131,17 @@ for (let i = 0; i < 10000000; i += thingsPerRequest) {
       const links = bggThing.link && bggThing.link.map((link) => link.$) || [];
       const numYearPublished = Math.max(
         0,
-        bggThing.yearpublished && bggThing.yearpublished.map((yp) => parseInt(yp.$.value, 10))[0]
+        bggThing.yearpublished && bggThing.yearpublished.map((yp) => parseInt(yp.$.value, 10))[0],
       );
-      const formattedYear = `${numYearPublished<1000 && '0' || ''}${numYearPublished<100 && '0' || ''}${numYearPublished<10 && '0' || ''}${numYearPublished}`;
+      const formattedYear = `${
+        numYearPublished < 1000 && '0' || ''
+      }${
+        numYearPublished < 100 && '0' || ''
+      }${
+        numYearPublished < 10 && '0' || ''
+      }${
+        numYearPublished
+      }`; // kill me
       const year = moment(
         `${formattedYear}-01-01`,
       ).format('YYYY-MM-DDThh:mm:ss') + 'Z';
