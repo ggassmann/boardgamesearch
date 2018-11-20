@@ -5,5 +5,5 @@ export default () => {
     <div>
       Product Page
     </div>
-  )
-}
+  );
+};

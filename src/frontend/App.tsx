@@ -5,11 +5,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import * as React from 'react';
 import { useState } from 'react';
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import { SearchInput } from 'src/frontend/components/SearchInput';
-import { ProductPageLoadable } from 'src/frontend/routes/ProductPage/ProductPageLoadable';
 import IndexPage from 'src/frontend/routes/IndexPage/IndexPage';
+import { ProductPageLoadable } from 'src/frontend/routes/ProductPage/ProductPageLoadable';
 
 export const App = () => {
   const [stateSearchInput, setStateSearchInput] = useState('');
@@ -34,8 +34,14 @@ export const App = () => {
       </AppBar>
       <BrowserRouter>
         <Switch>
-          <Route exact path='/' component={() => <IndexPage headerSearch={stateSearchInput} headerSearchFilters={stateSearchFilters}/>} />
-          <Route exact path='/item/:itemid' component={ProductPageLoadable} />
+          <Route
+            exact={true}
+            path='/'
+            component={() => (
+              <IndexPage headerSearch={stateSearchInput} headerSearchFilters={stateSearchFilters}/>
+            )}
+          />
+          <Route exact={true} path='/item/:itemid' component={ProductPageLoadable} />
         </Switch>
       </BrowserRouter>
     </>

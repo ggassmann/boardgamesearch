@@ -1,12 +1,12 @@
-import * as styledComponents from "styled-components";
-import { ThemedStyledComponentsModule } from "styled-components";
+import * as styledComponents from 'styled-components';
+import { ThemedStyledComponentsModule } from 'styled-components';
 
 const {
   default: styled,
   css,
   createGlobalStyle,
   keyframes,
-  ThemeProvider
+  ThemeProvider,
 } = styledComponents as ThemedStyledComponentsModule<styledComponents.DefaultTheme>;
 
 export { css, createGlobalStyle, keyframes, ThemeProvider };
