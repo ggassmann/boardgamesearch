@@ -70,9 +70,9 @@ export const TextField = styled.div`
     ${TextFieldButton} {
       background-color: ${getColor({type: 'background', color: 'neutral', brightness: 'light'})};
       border: 2px solid ${getColor({type: 'background', color: 'secondary'})};
-      margin-top: -1px;
-      margin-bottom: -1px;
-      margin-right: -1px;
+      margin-top: -2px;
+      margin-bottom: -2px;
+      margin-right: -2px;
       border-top-right-radius: 6px;
       border-bottom-right-radius: 6px;
       color: ${getColor({type: 'background', color: 'secondary'})};
