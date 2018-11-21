@@ -13,9 +13,9 @@ const colorPrimary = color('#90caf9');
 const colorPrimaryLight = color('#c3fdff');
 const colorPrimaryDark = color('#5d99c6');
 
-const colorSecondary = color('#4e342e');
-const colorSecondaryLight = color('#7b5e57');
-const colorSecondaryDark = color('#260e04');
+const colorSecondary = color('#ab47bc');
+const colorSecondaryLight = color('#df78ef');
+const colorSecondaryDark = color('#790e8b');
 
 const colorNeutral = color('#F5F5F6');
 const colorNeutralLight = color('#FFFFFF');
@@ -29,7 +29,7 @@ export const getColor = (options: IColorOptions): string => {
   let c = color('transparent');
   if (options.type === 'font') {
     c = color('black');
-    if (options.color === 'secondary') {
+    if (options.color === 'secondary' && options.brightness === 'dark') {
       c = color('white');
     }
     /*
