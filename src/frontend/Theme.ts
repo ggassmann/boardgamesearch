@@ -9,13 +9,13 @@ interface IColorOptions {
 
 // https://material.io/tools/color/#!/?view.left=0&view.right=0&primary.color=A1887F&secondary.color=9CCC65
 
-const colorPrimary = color('#a1887f');
-const colorPrimaryLight = color('#d3b8ae');
-const colorPrimaryDark = color('#725b53');
+const colorPrimary = color('#90caf9');
+const colorPrimaryLight = color('#c3fdff');
+const colorPrimaryDark = color('#5d99c6');
 
-const colorSecondary = color('#9ccc64');
-const colorSecondaryLight = color('#cfff94');
-const colorSecondaryDark = color('#6b9b36');
+const colorSecondary = color('#4e342e');
+const colorSecondaryLight = color('#7b5e57');
+const colorSecondaryDark = color('#260e04');
 
 const colorNeutral = color('#F5F5F6');
 const colorNeutralLight = color('#FFFFFF');
@@ -29,37 +29,47 @@ export const getColor = (options: IColorOptions): string => {
   let c = color('transparent');
   if (options.type === 'font') {
     c = color('black');
+    if (options.color === 'secondary') {
+      c = color('white');
+    }
+    /*
+    if (
+      (!options.brightness || options.brightness === 'neutral' || options.brightness === 'dark') &&
+      options.color === 'primary'
+    ) {
+      c = color('white');
+    }
+    */
   }
   if (options.type === 'background') {
     if (options.color === 'primary') {
       if (options.brightness === 'light') {
         c = colorPrimaryLight.hsl();
-      }
-      if (options.brightness === 'dark') {
+      } else if (options.brightness === 'dark') {
         c = colorPrimaryDark.hsl();
+      } else {
+        c = colorPrimary.hsl();
       }
-      c = colorPrimary.hsl();
     }
     if (options.color === 'secondary') {
       if (options.brightness === 'light') {
         c = colorSecondaryLight.hsl();
-      }
-      if (options.brightness === 'dark') {
+      } else if (options.brightness === 'dark') {
         c = colorSecondaryDark.hsl();
+      } else {
+        c = colorSecondary.hsl();
       }
-      c = colorSecondary.hsl();
     }
     if (options.color === 'neutral') {
       if (options.brightness === 'light') {
         c = colorNeutralLight.hsl();
-      }
-      if (options.brightness === 'slightdark') {
+      } else if (options.brightness === 'slightdark') {
         c = colorNeutralSlightDark.hsl();
-      }
-      if (options.brightness === 'dark') {
+      } else if (options.brightness === 'dark') {
         c = colorNeutralDark.hsl();
+      } else {
+        c = colorNeutral.hsl();
       }
-      c = colorNeutral.hsl();
     }
   }
   c = c.alpha(options.transparency);

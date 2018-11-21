@@ -7,15 +7,16 @@ import { eventTargetValue } from 'src/frontend/lib/eventTargetValue';
 import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { useClickOutside } from 'src/frontend/lib/useClickOutside';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
+import { ISearchFacet } from '../lib/ISearchFacet';
 import { FETCH_STATUS_SUCCESS, useFetch } from '../lib/useFetch';
-import { TextField, TextFieldInput, TextFieldLabel } from './InputField';
-import { Paper } from './Paper';
+import { TextField, TextFieldButton, TextFieldInput, TextFieldSuggestion, TextFieldSuggestions } from './InputField';
 
 interface ISearchInputProps {
   searchInput: string;
   setSearchInput: (searchInput: string) => void;
   searchFilters: ISearchFilter[];
   setSearchFilters: (searchFilters: ISearchFilter[]) => void;
+  searchFacets: ISearchFacet[];
 }
 
 interface ISearchSuggestionProps {
@@ -37,13 +38,13 @@ const SearchSuggestion = ({
   const isHighlighted = highlightedIndex === index;
 
   return (
-    <div
+    <TextFieldSuggestion
       key={`${suggestion.label}${suggestion.column}`}
       onKeyDown={onKeyDown}
       onClick={selectSuggestion}
     >
       {suggestion.label}
-    </div>
+    </TextFieldSuggestion>
   );
 };
 
@@ -65,8 +66,10 @@ const getSuggestions = (suggestions: ISearchSuggestion[], value: string): ISearc
   );
 };
 
-export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, searchFilters}: ISearchInputProps) => {
-  const [facets, facetsFetchState] = useFetch(`${host}:${searchPort}${searchOriginPath}facets`, { fields: {} });
+export const SearchInput = ({
+  setSearchInput, searchInput, setSearchFilters, searchFilters, searchFacets,
+}: ISearchInputProps) => {
+  const [baseFacets, baseFacetsFetchState] = useFetch(`${host}:${searchPort}${searchOriginPath}facets`, { fields: {} });
   const [autocompleteOptions, setAuctocompleteOptions] = useState([]);
   const [stateHighlightedIndex, setStateHighlightedIndex] = useState(0);
   const [stateSuggestions, setStateSuggestions] = useState([]);
@@ -78,14 +81,14 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
     setStateSuggestionsHide(true);
   });
 
-  if (autocompleteOptions.length === 0 && facetsFetchState === FETCH_STATUS_SUCCESS) {
+  if (autocompleteOptions.length === 0 && baseFacetsFetchState === FETCH_STATUS_SUCCESS) {
     let newAutocompleteOptions = [];
-    if (facetsFetchState === FETCH_STATUS_SUCCESS) {
+    if (baseFacetsFetchState === FETCH_STATUS_SUCCESS) {
       newAutocompleteOptions = [].concat(
-        ...Object.keys(facets.fields)
+        ...Object.keys(baseFacets.fields)
           .map(
             (fieldColumn) =>
-              facets.fields[fieldColumn]
+              baseFacets.fields[fieldColumn]
                 .filter(
                   (f: any, fIndex: number) => fIndex % 2 === 0,
                 )
@@ -142,14 +145,17 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
         id='search-query-header'
         type='text'
         value={searchInput}
+        placeholder='Search'
         onChange={eventTargetValue(setInput)}
         onKeyDown={moveHighlight}
         onFocus={() => setStateSuggestionsHide(false)}
         onBlur={() => setTimeout(() => setStateSuggestionsHide(true), 100)}
       />
-      <TextFieldLabel htmlFor='search-query-header'>Search</TextFieldLabel>
+      <TextFieldButton href={`/search/${searchInput}`}>
+        Search
+      </TextFieldButton>
       {!stateSuggestionsHide &&
-        <Paper
+        <TextFieldSuggestions
           onKeyDown={moveHighlight}
         >
           {stateSuggestions.map((suggestion, index) =>
@@ -162,7 +168,7 @@ export const SearchInput = ({ setSearchInput, searchInput, setSearchFilters, sea
               selectSuggestion={() => selectSuggestion(suggestion)}
             />,
           )}
-        </Paper>
+        </TextFieldSuggestions>
       }
     </TextField>
   );

@@ -9,12 +9,18 @@ export const FETCH_STATUS_SUCCESS = 2;
 
 export const useFetch = (endpoint: string, startingValue: any, options: any = {}) => {
   const [stateEndpoint, setStateEndpoint] = useState(null);
+  const [stateOptions, setStateOptions] = useState(null);
   const [stateStatus, setStateStatus] = useState(FETCH_STATUS_UNINITIALIZED);
   const [stateFetchAbortController, setStateFetchAbortController] = useState(null);
   const [stateResponse, setStateResponse] = useState(startingValue);
 
-  if (stateEndpoint !== endpoint) {
+  if (
+    stateEndpoint !== endpoint ||
+    JSON.stringify(Object.keys(stateOptions)) !== JSON.stringify(Object.keys(options)) || // Start with keys.
+    JSON.stringify(stateOptions) !== JSON.stringify(options)
+  ) {
     setStateEndpoint(endpoint);
+    setStateOptions(options);
     setStateStatus(FETCH_STATUS_FETCHING);
 
     if (stateFetchAbortController) {

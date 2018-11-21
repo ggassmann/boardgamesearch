@@ -69,6 +69,7 @@ app.get(`${searchOriginPath}facets`, async (req, res) => {
     res.send(500);
   }
 });
+
 app.post(`${searchOriginPath}search`, async (req, res) => {
   const data = await solrSearch(req.body.query, req.body.filters);
   res.send({

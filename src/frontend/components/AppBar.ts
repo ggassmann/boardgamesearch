@@ -14,6 +14,9 @@ export const AppBar = styled.header`
   flex-direction: column;
 
   height: 64px;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
 
   ${dp4}
 

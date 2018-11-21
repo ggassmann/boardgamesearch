@@ -14,8 +14,7 @@ interface IProductPropTypes {
 }
 
 interface IProductListPropTypes {
-  query?: string;
-  queryFilters?: ISearchFilter[];
+  products: any;
 }
 
 const ProductContainer = styled(Link)`
@@ -42,18 +41,10 @@ const Product = ({ item }: IProductPropTypes) => (
   </ProductContainer>
 );
 
-export const ProductList = ({ query, queryFilters }: IProductListPropTypes) => {
-  const endpoint = `${host}:${searchPort}${searchOriginPath}search`;
-  const [data, dataStatus] = useFetch(endpoint, { docs: [], explain: [] }, {
-    body: {
-      query,
-      filters: queryFilters,
-    },
-  });
+export const ProductList = ({ products }: IProductListPropTypes) => {
   return (
     <ul>
-      {dataStatus === FETCH_STATUS_FETCHING && <div/>}
-      {data.docs.map((item: IThing) => <Product key={item.id} item={item} />)}
+      {products.docs.map((item: IThing) => <Product key={item.id} item={item} />)}
     </ul>
   );
 };
