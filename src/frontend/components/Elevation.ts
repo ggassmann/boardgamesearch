@@ -25,3 +25,10 @@ export const dp8 = css`
 export const dp12 = css`
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
 `;
+
+export const transitionDpLow = css`
+  transition: box-shadow 0.1s;
+`;
+export const transitionDpHigh = css`
+  transition: box-shadow 0.15s;
+`;

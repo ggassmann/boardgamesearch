@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Paper } from 'src/frontend/components/Paper';
+import { Card } from 'src/frontend/components/Card';
 import { ISearchFilter } from '../lib/ISearchFilter';
 
 interface IFiltersViewProps {
@@ -8,12 +8,12 @@ interface IFiltersViewProps {
 
 export const FiltersView = ({searchFilters}: IFiltersViewProps) => {
   return (
-    <Paper>
+    <Card>
       {searchFilters.map((filter) => (
         <div>
           {filter.column}: {filter.label}
         </div>
       ))}
-    </Paper>
+    </Card>
   );
 };

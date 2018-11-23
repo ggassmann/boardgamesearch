@@ -42,6 +42,7 @@ const SearchSuggestion = ({
       key={`${suggestion.label}${suggestion.column}`}
       onKeyDown={onKeyDown}
       onClick={selectSuggestion}
+      highlighted={isHighlighted}
     >
       {suggestion.label}
     </TextFieldSuggestion>
@@ -108,8 +109,12 @@ export const SearchInput = ({
     }
   };
 
-  const moveHighlight = (e: SyntheticEvent) => {
+  const handleHighlightKeypress = (e: SyntheticEvent) => {
     const suggestions = getSuggestions(autocompleteOptions, searchInput);
+    if (stateSuggestionsHide || suggestions.length === 0) {
+      setStateHighlightedIndex(0);
+      return;
+    }
     if (keycode(e.nativeEvent) === 'down') {
       setStateHighlightedIndex(Math.min(suggestions.length - 1, stateHighlightedIndex + 1));
       e.preventDefault();
@@ -147,16 +152,16 @@ export const SearchInput = ({
         value={searchInput}
         placeholder='Search'
         onChange={eventTargetValue(setInput)}
-        onKeyDown={moveHighlight}
+        onKeyDown={handleHighlightKeypress}
         onFocus={() => setStateSuggestionsHide(false)}
         onBlur={() => setTimeout(() => setStateSuggestionsHide(true), 100)}
       />
       <TextFieldButton href={`/search/${searchInput}`}>
         Search
       </TextFieldButton>
-      {!stateSuggestionsHide &&
+      {!stateSuggestionsHide && stateSuggestions.length > 0 &&
         <TextFieldSuggestions
-          onKeyDown={moveHighlight}
+          onKeyDown={handleHighlightKeypress}
         >
           {stateSuggestions.map((suggestion, index) =>
             <SearchSuggestion
@@ -164,7 +169,7 @@ export const SearchInput = ({
               index={index}
               key={`${suggestion.label}&${suggestion.column}`}
               highlightedIndex={stateHighlightedIndex}
-              onKeyDown={moveHighlight}
+              onKeyDown={handleHighlightKeypress}
               selectSuggestion={() => selectSuggestion(suggestion)}
             />,
           )}

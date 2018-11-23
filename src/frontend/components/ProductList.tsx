@@ -6,7 +6,9 @@ import { FETCH_STATUS_FETCHING, useFetch } from 'src/frontend/lib/useFetch';
 import { IThing } from 'src/services/IThing';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
 import styled from 'styled-components';
+import { ProductPageLoadable } from '../routes/ProductPage/ProductPageLoadable';
 import { getColor } from '../Theme';
+import { Card } from './Card';
 import { dp1 } from './Elevation';
 
 interface IProductPropTypes {
@@ -23,28 +25,30 @@ const ProductContainer = styled(Link)`
   text-decoration: none;
   display: block;
 
-  &:hover {
-    background-color: ${getColor({type: 'background', color: 'neutral', brightness: 'slightdark'})};
-  }
+  padding: 1em;
 `;
 
 const Product = ({ item }: IProductPropTypes) => (
-  <ProductContainer to={`/item/${slugify(item.name).toLowerCase()}`}>
-    <li>
-      <img src={item.thumbnail} alt=''/>
-      <h3>{item.name}</h3>
-      <p>Rating: {item.suggestedRating || '?'}</p>
-    </li>
-    <li>
-      <hr/>
-    </li>
-  </ProductContainer>
+  <li>
+    <ProductContainer to={`/item/${item.id}/${slugify(item.name).toLowerCase()}`}>
+      <Card hoverable={true} onMouseOver={ProductPageLoadable.preload}>
+        <img src={item.thumbnail} alt=''/>
+        <h3>{item.name}</h3>
+        <p>Rating: {item.suggestedRating || '?'}</p>
+      </Card>
+    </ProductContainer>
+  </li>
 );
+
+const ProductListContainer = styled.ul`
+  list-style: none;
+  padding: 0;
+`;
 
 export const ProductList = ({ products }: IProductListPropTypes) => {
   return (
-    <ul>
+    <ProductListContainer>
       {products.docs.map((item: IThing) => <Product key={item.id} item={item} />)}
-    </ul>
+    </ProductListContainer>
   );
 };

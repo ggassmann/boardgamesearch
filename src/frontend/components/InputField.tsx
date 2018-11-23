@@ -2,7 +2,7 @@ import * as React from 'react';
 import styled, { css } from '../styled';
 import { getColor } from '../Theme';
 import { Box } from './Box';
-import { Paper } from './Paper';
+import { Card } from './Card';
 
 interface ITextFieldProps {
   outlined?: boolean;
@@ -40,7 +40,7 @@ export const TextFieldButton = styled.a`
   margin-left: -6px;
 `;
 
-export const TextFieldSuggestions = styled(Paper)`
+export const TextFieldSuggestions = styled(Card)`
   position: absolute;
   top: 2.5rem;
 
@@ -51,12 +51,20 @@ export const TextFieldSuggestions = styled(Paper)`
 
 const BoxA = Box.withComponent('a');
 
+interface ITextFieldSuggestionProps {
+  highlighted?: boolean;
+}
+
 export const TextFieldSuggestion = styled(BoxA)`
   font-size: 1.5rem;
   padding: 0.25rem;
   display: block;
 
   cursor: pointer;
+
+  ${({highlighted}: ITextFieldSuggestionProps) => highlighted && css`
+    background-color: ${getColor({type: 'background', color: 'neutral'})}
+  `}
 `;
 
 export const TextField = styled.div`

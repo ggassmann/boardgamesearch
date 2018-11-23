@@ -1,8 +1,7 @@
 import * as React from 'react';
-import * as Loadable from 'react-loadable';
 import { SquarePageLoader } from 'src/frontend/components/SquareLoader';
+import { loadable } from 'src/frontend/lib/loadable';
 
-export const ProductPageLoadable = Loadable({
-  loader: () => import('./ProductPage'),
-  loading: () => <SquarePageLoader/>,
-});
+export const ProductPageLoadable = loadable(
+  () => import('./ProductPage'),
+);

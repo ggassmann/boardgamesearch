@@ -79,4 +79,23 @@ app.post(`${searchOriginPath}search`, async (req, res) => {
   });
 });
 
+app.get(`${searchOriginPath}item/:id`, async (req, res) => {
+  const solrQuery = [
+    `${solrOrigin}boardgame/select?`,
+    [
+      `q=id:${req.params.id}`,
+      'rows=1',
+    ].join('&'),
+  ].join('');
+  try {
+    const response = await fetch(solrQuery);
+    const data = await response.json();
+    res.send(
+      data.response.docs[0],
+    );
+  } catch (e) {
+    res.send(500);
+  }
+});
+
 app.listen(port, () => log(`Example app listening on port ${port}!`));

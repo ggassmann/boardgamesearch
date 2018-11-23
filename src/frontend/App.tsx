@@ -62,7 +62,7 @@ export const App = () => {
             <Route
               exact={true}
               path='/'
-              component={() => (
+              render={() => (
                 <IndexPage
                   products={products}
                   productsStatus={productsStatus}
@@ -70,7 +70,11 @@ export const App = () => {
                 />
               )}
             />
-            <Route exact={true} path='/item/:slug' component={() => <ProductPageLoadable/>} />
+            <Route
+              exact={true}
+              path='/item/:id/:slug'
+              render={({match}: any) => <ProductPageLoadable id={match.params.id}/>}
+            />
           </Switch>
         </>
       </BrowserRouter>
