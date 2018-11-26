@@ -9,10 +9,49 @@ import { origin as solrOrigin } from 'src/services/solr';
 
 const amazonScrapeLimiter = new Bottleneck({
   maxConcurrent: 2,
+  minTime: 2500,
+});
+const solrLimiter = new Bottleneck({
+  maxConcurrent: 1,
   minTime: 5000,
 });
 
+interface IAmazonThing {
+  price?: number;
+  id: number;
+}
+
 (async () => {
+  async function submitSolrItem(thing: IAmazonThing): Promise<any> {
+    try {
+      const updateResponse = await fetch(`${solrOrigin}amazon/update/json/docs`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([thing]),
+      });
+      const updateData = await updateResponse.json();
+      const commitResponse = await fetch(`${solrOrigin}amazon/update`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          commit: {},
+          optimize: { waitSearcher: false },
+        }),
+      });
+      const commitData = await commitResponse.json();
+      log(`SOLR Bottleneck: ${solrLimiter.counts().QUEUED}`);
+    } catch (e) {
+      log(e);
+      return solrLimiter.schedule(async () => await submitSolrItem(thing));
+    }
+  }
+
   const getThingByID = async (id: number): Promise<IThing> => {
     const solrQuery = [
       `${solrOrigin}boardgame/select?`,
@@ -61,7 +100,12 @@ const amazonScrapeLimiter = new Bottleneck({
       await browserPage.goto(absoluteSearchResultURL);
       const searchResultContent = cheerio.load(await browserPage.content());
       const price = accounting.unformat(searchResultContent('#priceblock_ourprice').text());
+
       log(thing.name, price);
+      submitSolrItem({
+        id: thing.id,
+        price,
+      });
 
       return price;
     } catch (e) {

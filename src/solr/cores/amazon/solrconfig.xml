@@ -30,10 +30,10 @@
     -->
 
   <!-- Controls what version of Lucene various components of Solr
-       adhere to.  Generally, you want to use the latest version to
-       get all bug fixes and improvements. It is highly recommended
-       that you fully re-index after changing this setting as it can
-       affect both how text is indexed and queried.
+      adhere to.  Generally, you want to use the latest version to
+      get all bug fixes and improvements. It is highly recommended
+      that you fully re-index after changing this setting as it can
+      affect both how text is indexed and queried.
   -->
   <luceneMatchVersion>7.5.0</luceneMatchVersion>
 
