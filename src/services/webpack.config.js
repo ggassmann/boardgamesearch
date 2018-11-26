@@ -1,4 +1,6 @@
 const path = require('path');
+const { readdirSync, statSync } = require('fs')
+const { join } = require('path')
 
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
@@ -6,12 +8,22 @@ const webpack = require('webpack');
 
 const production = process.env.NODE_ENV === 'production';
 
+const dirs = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory())
+
+const services = dirs(__dirname);
+let serviceEntryPoints = {};
+services.forEach((service) => {
+  serviceEntryPoints[service] = ['source-map-support/register', '@babel/polyfill', path.resolve(__dirname, `${service}/index.ts`)];
+})
+
 module.exports = {
-  entry: {
-    boardgamegeekscrape: path.resolve(__dirname, 'boardgamegeekscrape/index.ts'),
-    search: path.resolve(__dirname, 'search/index.ts'),
-    servicedev: path.resolve(__dirname, 'servicedev.ts'),
-  },
+  entry: Object.assign(
+    {},
+    {
+      servicedev: ['source-map-support/register', '@babel/polyfill', path.resolve(__dirname, 'servicedev.ts')],
+    },
+    serviceEntryPoints,
+  ),
   mode: production ? 'production' : 'development',
   devtool: production ? 'source-map' : 'inline-source-map',
   target: 'node',

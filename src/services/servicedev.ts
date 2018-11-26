@@ -1,4 +1,3 @@
-import '@babel/polyfill';
 import { ChildProcess, spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -34,7 +33,7 @@ interface INamedServiceBundle extends ChildProcess {
       if (signal === 'SIGINT') {
         return;
       }
-      log(`${service.name} exited${code === null ? '.' : `with code ${code}`}`);
+      log(`${service.name} exited${code === null ? '.' : ` with code ${code}`}`);
     });
 
     return service;

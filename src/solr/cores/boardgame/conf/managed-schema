@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Solr managed schema - automatically generated - DO NOT EDIT -->
+<schema name="default-config" version="1.6">
+  <uniqueKey>id</uniqueKey>
+  <fieldType name="ancestor_path" class="solr.TextField">
+    <analyzer type="index">
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.PathHierarchyTokenizerFactory" delimiter="/"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="binary" class="solr.BinaryField"/>
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+  <fieldType name="location" class="solr.LatLonPointSpatialField" docValues="true"/>
+  <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType" geo="true" maxDistErr="0.001" distErrPct="0.025" distanceUnits="kilometers"/>
+  <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+  <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
+  <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+  <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+  <fieldType name="pfloat" class="solr.FloatPointField" docValues="true"/>
+  <fieldType name="pfloats" class="solr.FloatPointField" docValues="true" multiValued="true"/>
+  <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+  <fieldType name="pints" class="solr.IntPointField" docValues="true" multiValued="true"/>
+  <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+  <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+  <fieldType name="point" class="solr.PointType" subFieldSuffix="_d" dimension="2"/>
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
+  <fieldType name="strings" class="solr.StrField" sortMissingLast="true" docValues="true" multiValued="true"/>
+  <fieldType name="text_general" class="solr.TextField" autoGeneratePhraseQueries="true" positionIncrementGap="100" multiValued="true">
+    <analyzer type="index">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="lang/stopwords_en.txt" ignoreCase="true"/>
+      <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter class="solr.WordDelimiterGraphFilterFactory" catenateNumbers="1" preserveOriginal="1" splitOnCaseChange="0"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.EnglishMinimalStemFilterFactory"/>
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+      <filter class="solr.FlattenGraphFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms-query.txt"/>
+      <filter class="solr.StopFilterFactory" words="lang/stopwords_en.txt" ignoreCase="true"/>
+      <filter class="solr.WordDelimiterGraphFilterFactory" catenateNumbers="1" preserveOriginal="1" splitOnCaseChange="0"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.KeywordMarkerFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.EnglishMinimalStemFilterFactory"/>
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="text_spelling" class="solr.TextField" positionIncrementGap="25">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EnglishPossessiveFilterFactory"/>
+      <filter class="solr.EnglishMinimalStemFilterFactory"/>
+      <filter class="solr.FlattenGraphFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EnglishPossessiveFilterFactory"/>
+      <filter class="solr.EnglishMinimalStemFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <field name="_root_" type="string" docValues="false" indexed="true" stored="false"/>
+  <field name="_spelling_" type="text_spelling" multiValued="true" indexed="true" stored="false"/>
+  <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
+  <field name="_version_" type="plong" indexed="false" stored="false"/>
+  <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="_id" type="pint" indexed="true" required="true" stored="true"/>
+  <field name="type" type="string" indexed="true" required="true" stored="true"/>
+  <field name="thumbnail" type="string" indexed="true" stored="true"/>
+  <field name="image" type="string" indexed="true" stored="true"/>
+  <field name="name" type="string" indexed="true" stored="true"/>
+  <field name="description" type="string" indexed="true" stored="true"/>
+  <field name="yearPublished" type="pdate" indexed="true" stored="true"/>
+  <field name="minPlayers" type="pint" indexed="true" stored="true"/>
+  <field name="maxPlayers" type="pint" indexed="true" stored="true"/>
+  <field name="playingTime" type="pint" indexed="true" stored="true"/>
+  <field name="minPlayTime" type="pint" indexed="true" stored="true"/>
+  <field name="maxPlayTime" type="pint" indexed="true" stored="true"/>
+  <field name="minAge" type="pint" indexed="true" stored="true"/>
+  <field name="categories" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="mechanics" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="families" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="expansions" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="designers" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="artists" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="publishers" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="producers" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="genres" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="integrations" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="accessories" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="compilations" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="serieses" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="franchises" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="platforms" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="themes" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="modes" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="issues" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="suggestedRating" type="pfloat" indexed="true" stored="true"/>
+  <field name="suggestedWeight" type="pfloat" indexed="true" stored="true"/>
+  <field name="suggestedLanguageDependence" type="string" indexed="true" stored="true"/>
+  <copyField source="*" dest="_text_"/>
+  <copyField source="*" dest="_spelling_"/>
+  <copyField source="id" dest="_id"/>
+</schema>

@@ -1,6 +1,3 @@
-import 'source-map-support/register';
-
-import '@babel/polyfill';
 import Bottleneck from 'bottleneck';
 import * as he from 'he';
 import * as _ from 'lodash';
@@ -153,10 +150,6 @@ for (let i = 0; i < 10000000; i += thingsPerRequest) {
         name: bggThing.name &&
           bggThing.name.map((name) => name.$).filter((name) => name.type === 'primary')[0].value || undefined,
         description: bggThing.description && he.decode(bggThing.description[0]) || undefined,
-        strict_date_published:
-          bggThing.yearpublished &&
-          !isNaN(bggThing.yearpublished.map((yp) => parseInt(yp.$.value, 10))[0]) &&
-          `${bggThing.yearpublished.map((yp) => parseInt(yp.$.value, 10))[0]}/01/01` || undefined,
         yearPublished: year,
         minPlayers: bggThing.minplayers && parseInt(bggThing.minplayers.map((mp) => mp.$.value)[0], 10) || undefined,
         maxPlayers: bggThing.maxplayers && parseInt(bggThing.maxplayers.map((mp) => mp.$.value)[0], 10) || undefined,

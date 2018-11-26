@@ -17,3 +17,7 @@ export const log = async (x: any, ...params: any[]) => {
     nextLog = undefined;
   }
 };
+
+export const error = async (x: any, ...params: any[]) => {
+  log(x, ...params);
+};
