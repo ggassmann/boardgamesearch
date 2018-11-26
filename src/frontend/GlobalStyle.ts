@@ -13,6 +13,10 @@ export const GlobalStyle = createGlobalStyle`
     font-family: 'Roboto', sans-serif;
   }
   a {
-    color: ${getColor({type: 'font'})};
+    color: ${getColor({ type: 'font' })};
+  }
+  img {
+    width: 100%;
+    height: auto;
   }
 `;

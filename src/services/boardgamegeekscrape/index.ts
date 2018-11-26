@@ -9,10 +9,10 @@ import fetch from 'node-fetch';
 import * as util from 'util';
 import * as xml2jslib from 'xml2js';
 
-import {log} from 'src/services/log';
-import {IThing} from '../IThing';
-import {origin as solrOrigin} from '../solr';
-import {IBGGScrapeResults} from './bggapitypes';
+import { log } from 'src/lib/log';
+import { IThing } from '../../lib/IThing';
+import { origin as solrOrigin } from '../solr';
+import { IBGGScrapeResults } from './bggapitypes';
 
 const xml2js = util.promisify(xml2jslib.parseString);
 
@@ -135,13 +135,13 @@ for (let i = 0; i < 10000000; i += thingsPerRequest) {
       );
       const formattedYear = `${
         numYearPublished < 1000 && '0' || ''
-      }${
+        }${
         numYearPublished < 100 && '0' || ''
-      }${
+        }${
         numYearPublished < 10 && '0' || ''
-      }${
+        }${
         numYearPublished
-      }`; // kill me
+        }`; // kill me
       const year = moment(
         `${formattedYear}-01-01`,
       ).format('YYYY-MM-DDThh:mm:ss') + 'Z';
@@ -208,8 +208,8 @@ for (let i = 0; i < 10000000; i += thingsPerRequest) {
                         ),
                     }))
                     .sort((a, b) => b.result - a.result)
-                    [0].playerCount,
-                    10,
+                  [0].playerCount,
+                  10,
                 );
               } catch (e) {
                 return;
@@ -220,7 +220,7 @@ for (let i = 0; i < 10000000; i += thingsPerRequest) {
                 pollItem.results[0].result
                   .map((playerAge) => playerAge.$)
                   .sort((a, b) => b.numvotes - a.numvotes)
-                  [0].value,
+                [0].value,
                 10,
               );
             } else if (pollItem.$.name === 'language_dependence') {
@@ -228,7 +228,7 @@ for (let i = 0; i < 10000000; i += thingsPerRequest) {
               value = pollItem.results[0].result
                 .map((pi) => pi.$)
                 .sort((a, b) => b.numvotes - a.numvotes)
-                [0].value;
+              [0].value;
             }
             return {
               key,
@@ -236,7 +236,7 @@ for (let i = 0; i < 10000000; i += thingsPerRequest) {
             };
           });
         const finalPollResults =
-          pollResults.reduce((obj, r) => !r ? obj : Object.assign({}, obj, {[r.key]: r.value}), {});
+          pollResults.reduce((obj, r) => !r ? obj : Object.assign({}, obj, { [r.key]: r.value }), {});
         thing = Object.assign(
           {},
           thing,

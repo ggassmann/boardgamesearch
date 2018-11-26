@@ -4,9 +4,9 @@ import * as cors from 'cors';
 import * as express from 'express';
 import fetch from 'node-fetch';
 import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
-import {log} from 'src/services/log';
-import {searchOriginPath, searchPort as port} from 'src/services/serviceorigins';
-import {origin as solrOrigin} from 'src/services/solr';
+import { log } from 'src/lib/log';
+import { searchOriginPath, searchPort as port } from 'src/services/serviceorigins';
+import { origin as solrOrigin } from 'src/services/solr';
 
 const app = express();
 

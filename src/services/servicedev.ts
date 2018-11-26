@@ -1,10 +1,10 @@
 import '@babel/polyfill';
-import {ChildProcess, spawn} from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
 import yargs from 'yargs';
-import {log} from './log';
+import { log } from '../lib/log';
 const readDir = util.promisify(fs.readdir);
 
 const targetService = yargs(process.argv).argv._[2] || null;
@@ -63,7 +63,7 @@ interface INamedServiceBundle extends ChildProcess {
             ...services.filter((service) => service.name !== serviceName),
             newService,
           ];
-          setTimeout(() => {isBuildingNew = false; }, 5);
+          setTimeout(() => { isBuildingNew = false; }, 5);
         });
         oldService.kill('SIGINT');
       }
@@ -96,9 +96,9 @@ interface INamedServiceBundle extends ChildProcess {
       didStartExiting = false;
     }
   }
-  process.on('exit', exitHandler.bind(null, {cleanup: true}));
-  process.on('SIGINT', exitHandler.bind(null, {exit: true, cleanup: true}));
-  process.on('SIGUSR1', exitHandler.bind(null, {exit: true, cleanup: true}));
-  process.on('SIGUSR2', exitHandler.bind(null, {exit: true, cleanup: true}));
-  process.on('uncaughtException', exitHandler.bind(null, {exit: true, cleanup: true}));
+  process.on('exit', exitHandler.bind(null, { cleanup: true }));
+  process.on('SIGINT', exitHandler.bind(null, { exit: true, cleanup: true }));
+  process.on('SIGUSR1', exitHandler.bind(null, { exit: true, cleanup: true }));
+  process.on('SIGUSR2', exitHandler.bind(null, { exit: true, cleanup: true }));
+  process.on('uncaughtException', exitHandler.bind(null, { exit: true, cleanup: true }));
 })();
