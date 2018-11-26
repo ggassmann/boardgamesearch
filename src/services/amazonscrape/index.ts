@@ -79,6 +79,9 @@ interface IAmazonThing {
   const processThing = async (id: number): Promise<number> => {
     const browserPagePromise = browser.newPage();
     const thing = await getThingByID(id);
+    if (!thing) {
+      return;
+    }
     const amazonSearchURL = getAmazonSearchURLFromThing(thing);
 
     const browserPage = await browserPagePromise;

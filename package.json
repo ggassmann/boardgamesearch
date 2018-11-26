@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "cross-env NODE_ENV=production webpack && cross-env NODE_ENV=production webpack --config src/services/webpack.config.js",
     "dev:services": "webpack --config src/services/webpack.config.js --watch",
     "dev:service": "node public/services/servicedev.bundle.js",
     "dev:frontend": "webpack-dev-server --history-api-fallback"
