@@ -9,6 +9,8 @@ const webpack = require('webpack');
 const production = process.env.NODE_ENV === 'production';
 const analyze = process.env.ANALYZE === 'true';
 
+const CFG = require('./.devcfg.js');
+
 module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.com/gaearon/react-hot-loader/issues/1088
   entry: {
     app: './src/frontend/index.tsx'
@@ -92,9 +94,12 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
     /*
     new webpack.HotModuleReplacementPlugin()
     */
+    new webpack.DefinePlugin({
+      'CFG': JSON.stringify(CFG),
+    }),
     ...(production ? [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('production')
+        'process.env.NODE_ENV': JSON.stringify('production'),
       })] : []),
     ...(analyze ? [new BundleAnalyzerPlugin()] : []),
   ],

@@ -120,7 +120,7 @@ interface IAmazonThing {
   const browser = await puppeteer.launch({
     executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
   });
-  for (let i = 1; i < 100; i++) {
+  for (let i = 1; i < 50000; i++) {
     amazonScrapeLimiter.schedule(async () => await processThing(i));
   }
 })();

@@ -16,6 +16,8 @@ services.forEach((service) => {
   serviceEntryPoints[service] = ['source-map-support/register', '@babel/polyfill', path.resolve(__dirname, `${service}/index.ts`)];
 })
 
+const CFG = require(path.resolve(__dirname, '../../.devcfg.js'));
+
 module.exports = {
   entry: Object.assign(
     {},
@@ -97,9 +99,12 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(['public/services']),
+    new webpack.DefinePlugin({
+      'CFG': JSON.stringify(CFG),
+    }),
     ...(production ? [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('production')
+        'process.env.NODE_ENV': JSON.stringify('production'),
       })] : []),
   ],
   output: {
