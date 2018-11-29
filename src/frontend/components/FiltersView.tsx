@@ -7,6 +7,9 @@ interface IFiltersViewProps {
 }
 
 export const FiltersView = ({searchFilters}: IFiltersViewProps) => {
+  if (searchFilters.length < 1) {
+    return null;
+  }
   return (
     <Card>
       {searchFilters.map((filter) => (
