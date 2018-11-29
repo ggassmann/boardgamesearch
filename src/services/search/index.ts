@@ -98,4 +98,4 @@ app.get(`${searchOriginPath}item/:id`, async (req, res) => {
   }
 });
 
-app.listen(port, () => log(`Example app listening on port ${port}!`));
+app.listen(port, () => log('Search Service Listening!'));
