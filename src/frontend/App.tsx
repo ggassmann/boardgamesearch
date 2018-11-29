@@ -14,12 +14,26 @@ import { GlobalStyle } from './GlobalStyle';
 import { useFetch } from './lib/useFetch';
 import styled from './styled';
 
+interface IHeaderLinkProps {
+  hideAfter?: number;
+  hideBefore?: number;
+}
+
 const HeaderLink = styled(Link)`
   flex-grow: 1;
   font-size: 2rem;
-  padding-right: 2rem;
+  padding-right: 1rem;
   text-decoration: none;
+
+  @media screen and (max-width: ${({hideAfter}: IHeaderLinkProps) => hideAfter}px) {
+    display: none;
+  }
+  @media screen and (min-width: ${({hideBefore}: IHeaderLinkProps) => hideBefore}px) {
+    display: none;
+  }
 `;
+
+const SMALL_HEADER_CUTOFF = 380;
 
 export const App = () => {
   const [stateSearchInput, setStateSearchInput] = useState('');
@@ -43,8 +57,11 @@ export const App = () => {
           <AppBar>
             <Flex row={true} verticalAlignItems={'center'}>
               <Typeography element='h2'>
-                <HeaderLink to='/'>
+                <HeaderLink to='/' hideAfter={SMALL_HEADER_CUTOFF}>
                   Board Game Search
+                </HeaderLink>
+                <HeaderLink to='/' hideBefore={SMALL_HEADER_CUTOFF}>
+                  BGS
                 </HeaderLink>
               </Typeography>
               <Box>
