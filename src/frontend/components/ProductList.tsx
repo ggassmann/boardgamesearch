@@ -28,10 +28,22 @@ const ProductContainer = styled(Link)`
   padding: 1em;
 `;
 
+const ProductImageThumbnailContainer = styled(Box).attrs({
+  grow: 1,
+})`
+  min-width: 128px;
+`;
+
 const ProductImageThumbnail = styled.img`
   max-height: 96px;
-  height: 96;
+  height: 96px;
   width: auto;
+`;
+
+const ProductInfoContainer = styled(Box).attrs({
+  grow: 5,
+})`
+  min-width: 200px;
 `;
 
 const Product = ({ item }: IProductPropTypes) => (
@@ -40,12 +52,12 @@ const Product = ({ item }: IProductPropTypes) => (
       <Card hoverEffect={true} onMouseOver={ProductPageLoadable.preload}>
         <h3>{item.name}</h3>
         <Flex>
-          <Box grow={1}>
+          <ProductImageThumbnailContainer>
             <ProductImageThumbnail src={item.thumbnail} alt='' />
-          </Box>
-          <Box grow={5}>
+          </ProductImageThumbnailContainer>
+          <ProductInfoContainer>
             <p>Rating: {item.suggestedRating || '?'}</p>
-          </Box>
+          </ProductInfoContainer>
         </Flex>
       </Card>
     </ProductContainer>

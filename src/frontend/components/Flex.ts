@@ -8,6 +8,7 @@ interface IFlexProps {
 
 export const Flex = styled.div`
   display: flex;
+  flex-wrap: wrap;
   max-width: 100%;
   ${({ row }: IFlexProps) => row && css`
     flex-direction: row;

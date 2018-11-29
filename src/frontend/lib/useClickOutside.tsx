@@ -6,13 +6,13 @@ export const useClickOutside = (ref: React.MutableRefObject<Node>, onClickOutsid
     if (ref.current.contains(e.target)) {
       return;
     }
-    onClickOutside();
-  }
+    onClickOutside(e);
+  };
   useEffect(() => {
     document.addEventListener('mousedown', handleClick, false);
 
     return () => {
       document.removeEventListener('mousedown', handleClick, false);
-    }
+    };
   });
 };

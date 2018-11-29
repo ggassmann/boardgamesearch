@@ -4621,6 +4621,11 @@ styled-components@^4.1.1:
     stylis-rule-sheet "^0.0.10"
     supports-color "^5.5.0"
 
+styled-icons@^5.2.2:
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/styled-icons/-/styled-icons-5.2.2.tgz#906871133406692d65a1dc0afb4308d71d941ca1"
+  integrity sha512-9xus9e/rzuccgBB4LLNtKcl3ZYF2lmy3uj9Uz7KUahrfVIWZ8KDyFgH+O3VzsWyfKwVzSONNht//2ZberDnwRA==
+
 stylis-rule-sheet@^0.0.10:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/stylis-rule-sheet/-/stylis-rule-sheet-0.0.10.tgz#44e64a2b076643f4b52e5ff71efc04d8c3c4a430"

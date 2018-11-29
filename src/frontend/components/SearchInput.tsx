@@ -7,8 +7,10 @@ import { eventTargetValue } from 'src/frontend/lib/eventTargetValue';
 import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { useClickOutside } from 'src/frontend/lib/useClickOutside';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
+import { Search } from 'styled-icons/fa-solid/Search';
 import { ISearchFacet } from '../lib/ISearchFacet';
 import { FETCH_STATUS_SUCCESS, useFetch } from '../lib/useFetch';
+import styled from '../styled';
 import { TextField, TextFieldButton, TextFieldInput, TextFieldSuggestion, TextFieldSuggestions } from './InputField';
 
 interface ISearchInputProps {
@@ -31,6 +33,12 @@ interface ISearchSuggestion {
   label: string;
   column: string;
 }
+
+const SearchButtonLabel = styled.span`
+  display: none;
+`;
+
+const SEARCH_SINGLE_BUTTON_BREAKPOINT = 570;
 
 const SearchSuggestion = ({
   suggestion, index, highlightedIndex, onKeyDown, selectSuggestion,
@@ -75,11 +83,14 @@ export const SearchInput = ({
   const [stateHighlightedIndex, setStateHighlightedIndex] = useState(0);
   const [stateSuggestions, setStateSuggestions] = useState([]);
   const [stateSuggestionsHide, setStateSuggestionsHide] = useState(false);
+  const [stateSearchButtonOpen, setStateSearchButtonOpen] = useState(false);
 
   const clickOutsideRef = React.useRef(null);
+  const textFieldRef = React.useRef(null);
 
-  useClickOutside(clickOutsideRef, () => {
+  useClickOutside(clickOutsideRef, (e: MouseEvent) => {
     setStateSuggestionsHide(true);
+    setStateSearchButtonOpen(false);
   });
 
   if (autocompleteOptions.length === 0 && baseFacetsFetchState === FETCH_STATUS_SUCCESS) {
@@ -144,8 +155,23 @@ export const SearchInput = ({
     setStateSuggestionsHide(true);
   };
 
+  const onSearchButtonClick = (e: SyntheticEvent) => {
+    if (window.innerWidth <= SEARCH_SINGLE_BUTTON_BREAKPOINT && !stateSearchButtonOpen) {
+      e.preventDefault();
+      setStateSearchButtonOpen(true);
+      setTimeout(() => {
+        textFieldRef.current.focus();
+      }, 1);
+    }
+  };
+
   return (
-    <TextField outlined={true} ref={clickOutsideRef}>
+    <TextField
+      outlined={true}
+      buttonOnlyBreakpoint={SEARCH_SINGLE_BUTTON_BREAKPOINT}
+      open={stateSearchButtonOpen}
+      ref={clickOutsideRef}
+    >
       <TextFieldInput
         id='search-query-header'
         type='text'
@@ -155,9 +181,13 @@ export const SearchInput = ({
         onKeyDown={handleHighlightKeypress}
         onFocus={() => setStateSuggestionsHide(false)}
         onBlur={() => setTimeout(() => setStateSuggestionsHide(true), 100)}
+        ref={textFieldRef}
       />
-      <TextFieldButton href={`/search/${searchInput}`}>
-        Search
+      <TextFieldButton href={`/search/${searchInput}`} onClick={onSearchButtonClick}>
+        <Search size={'1.2rem'}/>
+        <SearchButtonLabel>
+          Search
+        </SearchButtonLabel>
       </TextFieldButton>
       {!stateSuggestionsHide && stateSuggestions.length > 0 &&
         <TextFieldSuggestions
