@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useEffect, useRef} from 'react';
 
-export const useClickOutside = (ref: React.MutableRefObject<Node>, onClickOutside: Function) => {
+export const useClickOutside = (ref: React.MutableRefObject<Node>, onClickOutside: (event: MouseEvent) => any) => {
   const handleClick = (e: any) => {
     if (ref.current.contains(e.target)) {
       return;
