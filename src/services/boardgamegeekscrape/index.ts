@@ -11,10 +11,10 @@ import * as xml2jslib from 'xml2js';
 import { con } from 'src/services/database';
 
 import { log } from 'src/lib/log';
-import { IThing } from '../../lib/IThing';
 import { ScrapeProgress, ScrapeStatus } from '../entities/ScrapeProgress';
 import { origin as solrOrigin } from '../solr';
 import { IBGGScrapeResults } from './bggapitypes';
+import { IBGGThing } from './IBGGThing';
 
 const xml2js = util.promisify(xml2jslib.parseString);
 
@@ -26,7 +26,7 @@ const solrLimiter = new Bottleneck({
   maxConcurrent: 1,
   minTime: 5000,
 });
-const thingsPerScrapeRequest = 200;
+const thingsPerScrapeRequest = 250;
 const thingsPerSolrRequest = 500;
 
 interface IPollValueMap {
@@ -67,7 +67,7 @@ setInterval(async () => {
   }
   async function submitSolrItem(): Promise<any> {
     try {
-      const updateResponse = await fetch(`${solrOrigin}boardgame/update/json/docs`, {
+      const updateResponse = await fetch(`${solrOrigin}boardgamegeek/update/json/docs`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -76,7 +76,7 @@ setInterval(async () => {
         body: JSON.stringify(things),
       });
       const updateData = await updateResponse.json();
-      const commitResponse = await fetch(`${solrOrigin}boardgame/update`, {
+      const commitResponse = await fetch(`${solrOrigin}boardgamegeek/update`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -88,7 +88,7 @@ setInterval(async () => {
       });
       const commitData = await commitResponse.json();
       totalDocumentsSubmitted += things.length;
-      things.forEach(async (thing: IThing) => {
+      things.forEach(async (thing: IBGGThing) => {
         const sp = new ScrapeProgress();
         sp.index = thing.id;
         sp.name = 'boardgamegeek',
@@ -109,14 +109,14 @@ setInterval(async () => {
 
 (async () => {
   const startingIndex =
-    (await (await con())
+    ((await (await con())
       .getRepository(ScrapeProgress)
       .createQueryBuilder('scrape_progress')
       .where("scrape_progress.name = 'boardgamegeek'")
       .take(1)
       .orderBy('scrape_progress.index', 'DESC')
       .getOne()
-    ).index;
+    ) || {index: 0}).index;
 
   log(`Starting @ ${startingIndex}`);
 
@@ -188,10 +188,10 @@ setInterval(async () => {
           }${
           numYearPublished
           }`; // kill me
-        const year = moment(
+        const yearPublished = moment(
           `${formattedYear}-01-01`,
         ).format('YYYY-MM-DDThh:mm:ss') + 'Z';
-        let thing: IThing = {
+        let thing: IBGGThing = {
           type: bggThing.$.type,
           id: parseInt(bggThing.$.id, 10),
           thumbnail: bggThing.thumbnail ? bggThing.thumbnail[0] : '',
@@ -199,7 +199,7 @@ setInterval(async () => {
           name: bggThing.name &&
             bggThing.name.map((name) => name.$).filter((name) => name.type === 'primary')[0].value || undefined,
           description: bggThing.description && he.decode(bggThing.description[0]) || undefined,
-          yearPublished: year,
+          yearPublished,
           minPlayers:
             bggThing.minplayers && parseInt(bggThing.minplayers.map((mp) => mp.$.value)[0], 10) || undefined,
           maxPlayers:

@@ -19,9 +19,9 @@ const facets = ['categories', 'families', 'designers', 'publishers', 'mechanics'
 
 const solrSearch = async (query: string, filters: ISearchFilter[] = []) => {
   const solrQuery = [
-    `${solrOrigin}boardgame/select?`,
+    `${solrOrigin}thing/select?`,
     [
-      'boost=sum(product(suggestedRating, 0.5), recip(ms(NOW,yearPublished), 3.16e-11, 1, 1))',
+      'boost=sum(product(suggestedRating, 0.5), recip(ms(NOW,datePublished), 3.16e-11, 1, 1))',
       'defType=edismax',
       `q=${query}`,
       'q.alt=*:*',
@@ -50,7 +50,7 @@ const solrSearch = async (query: string, filters: ISearchFilter[] = []) => {
 
 app.get(`${searchOriginPath}facets`, async (req, res) => {
   const solrQuery = [
-    `${solrOrigin}boardgame/select?`,
+    `${solrOrigin}thing/select?`,
     [
       'q=*.*',
       'facet=on',
@@ -81,7 +81,7 @@ app.post(`${searchOriginPath}search`, async (req, res) => {
 
 app.get(`${searchOriginPath}item/:id`, async (req, res) => {
   const solrQuery = [
-    `${solrOrigin}boardgame/select?`,
+    `${solrOrigin}thing/select?`,
     [
       `q=id:${req.params.id}`,
       'rows=1',

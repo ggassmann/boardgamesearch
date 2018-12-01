@@ -27,5 +27,6 @@ import { log } from 'src/lib/log';
     });
   };
   spawnService('amazon');
-  spawnService('boardgame');
+  spawnService('thing');
+  spawnService('boardgamegeek');
 })();

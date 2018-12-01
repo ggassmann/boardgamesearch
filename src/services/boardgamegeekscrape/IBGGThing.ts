@@ -1,11 +1,11 @@
-export interface IThing {
+export interface IBGGThing {
   type?: string;
   id?: number;
   thumbnail?: string;
   image?: string;
   name?: string;
   description?: string;
-  datePublished?: string;
+  yearPublished?: string;
   minPlayers?: number;
   maxPlayers?: number;
   playingTime?: number;
@@ -33,7 +33,4 @@ export interface IThing {
   suggestedLanguageDependence?: string;
   suggestedRating?: number;
   suggestedWeight?: number;
-
-  amazonPrice?: number;
-  amazonLink?: string;
 }

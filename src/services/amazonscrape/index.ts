@@ -80,6 +80,7 @@ interface IAmazonThing {
       ].join('&'),
     ].join('');
     try {
+      console.log(solrQuery);
       const response = await fetch(solrQuery);
       const responseJson = await response.json();
       if (responseJson.error) {

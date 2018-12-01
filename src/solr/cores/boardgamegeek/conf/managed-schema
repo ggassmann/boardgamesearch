@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Solr managed schema - automatically generated - DO NOT EDIT -->
+<schema name="default-config" version="1.6">
+  <uniqueKey>id</uniqueKey>
+  <fieldType name="binary" class="solr.BinaryField"/>
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+  <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+  <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
+  <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+  <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+  <fieldType name="pfloat" class="solr.FloatPointField" docValues="true"/>
+  <fieldType name="pfloats" class="solr.FloatPointField" docValues="true" multiValued="true"/>
+  <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+  <fieldType name="pints" class="solr.IntPointField" docValues="true" multiValued="true"/>
+  <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+  <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+  <fieldType name="point" class="solr.PointType" subFieldSuffix="_d" dimension="2"/>
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
+  <fieldType name="strings" class="solr.StrField" sortMissingLast="true" docValues="true" multiValued="true"/>
+  <fieldType name="text_general" class="solr.TextField" autoGeneratePhraseQueries="true" positionIncrementGap="100" multiValued="true">
+    <analyzer type="index">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+    </analyzer>
+  </fieldType>
+  <field name="_root_" type="string" docValues="false" indexed="true" stored="false"/>
+  <field name="_version_" type="plong" indexed="false" stored="false"/>
+  <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="_id" type="pint" indexed="true" required="true" stored="true"/>
+  <field name="type" type="string" indexed="true" required="true" stored="true"/>
+  <field name="thumbnail" type="string" indexed="true" stored="true"/>
+  <field name="image" type="string" indexed="true" stored="true"/>
+  <field name="name" type="string" indexed="true" stored="true"/>
+  <field name="description" type="string" indexed="true" stored="true"/>
+  <field name="yearPublished" type="pdate" indexed="true" stored="true"/>
+  <field name="minPlayers" type="pint" indexed="true" stored="true"/>
+  <field name="maxPlayers" type="pint" indexed="true" stored="true"/>
+  <field name="playingTime" type="pint" indexed="true" stored="true"/>
+  <field name="minPlayTime" type="pint" indexed="true" stored="true"/>
+  <field name="maxPlayTime" type="pint" indexed="true" stored="true"/>
+  <field name="minAge" type="pint" indexed="true" stored="true"/>
+  <field name="categories" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="mechanics" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="families" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="expansions" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="designers" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="artists" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="publishers" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="producers" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="genres" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="integrations" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="accessories" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="compilations" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="serieses" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="franchises" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="platforms" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="themes" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="modes" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="issues" type="strings" multiValued="true" indexed="true" stored="true"/>
+  <field name="suggestedRating" type="pfloat" indexed="true" stored="true"/>
+  <field name="suggestedWeight" type="pfloat" indexed="true" stored="true"/>
+  <field name="suggestedLanguageDependence" type="string" indexed="true" stored="true"/>
+  <copyField source="id" dest="_id"/>
+</schema>
