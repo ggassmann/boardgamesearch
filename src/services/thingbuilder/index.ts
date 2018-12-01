@@ -11,15 +11,16 @@ import { con } from '../database';
 import { ScrapeProgress, ScrapeStatus } from '../entities/ScrapeProgress';
 import { origin as solrOrigin } from '../solr';
 
+const PAGE_SIZE = 250;
+
 (async () => {
   const getPageOfBGGThings = async (page: number): Promise<IBGGThing[]> => {
-    const pageSize = 200;
     const solrQuery = [
       `${solrOrigin}boardgamegeek/select?`,
       [
         'q=id:[0 TO *]',
-        `rows=${pageSize}`,
-        `start=${page * pageSize}`,
+        `rows=${PAGE_SIZE}`,
+        `start=${page * PAGE_SIZE}`,
         'sort=_id ASC',
       ].join('&'),
     ].join('');
@@ -27,6 +28,9 @@ import { origin as solrOrigin } from '../solr';
     return res.response.docs;
   };
   const getAmazonThingsByBGGId = async (ids: number[]): Promise<IAmazonThing[]> => {
+    if (ids.length === 0) {
+      return [];
+    }
     const solrQuery = [
       `${solrOrigin}amazon/select?`,
       [
@@ -34,7 +38,11 @@ import { origin as solrOrigin } from '../solr';
       ].join('&'),
     ].join('');
     const response = await fetch(solrQuery);
-    const data: IAmazonThing[] = (await response.json()).response.docs;
+    const responseJson = await response.json();
+    if (!responseJson.response) {
+      log(responseJson);
+    }
+    const data: IAmazonThing[] = responseJson.response.docs;
     return data;
   };
   const submitThings = async (things: IThing[]) => {
@@ -68,55 +76,84 @@ import { origin as solrOrigin } from '../solr';
   };
   const processPage = async (page: number) => {
     const bggThings: IBGGThing[] = await getPageOfBGGThings(page);
-    const bggIds = bggThings.map((bggThing) => bggThing.id);
-    const amazonThings = await getAmazonThingsByBGGId(bggIds);
-    const things: IThing[] = bggThings.map((bggThing: IBGGThing) => {
-      const matchingAmazonThings = amazonThings.filter((aThing: IAmazonThing) => aThing.id === bggThing.id);
-      const amazonThing: IAmazonThing = matchingAmazonThings.length > 0 &&
-        matchingAmazonThings[0] || {id: bggThing.id};
+    let bggIds = bggThings.map((bggThing) => bggThing.id);
 
-      return {
-        type: bggThing.type,
-        id: bggThing.id,
-        thumbnail: bggThing.thumbnail,
-        image: bggThing.image,
-        name: bggThing.name,
-        description: bggThing.description,
-        datePublished: bggThing.yearPublished,
-        minPlayers: bggThing.minPlayers,
-        maxPlayers: bggThing.maxPlayers,
-        playingTime: bggThing.playingTime,
-        minPlayTime: bggThing.minPlayTime,
-        maxPlayTime: bggThing.maxPlayTime,
-        minAge: bggThing.minAge,
-        categories: bggThing.categories,
-        mechanics: bggThing.mechanics,
-        families: bggThing.families,
-        expansions: bggThing.expansions,
-        designers: bggThing.designers,
-        artists: bggThing.artists,
-        publishers: bggThing.publishers,
-        producers: bggThing.producers,
-        genres: bggThing.genres,
-        integrations: bggThing.integrations,
-        accessories: bggThing.accessories,
-        compilations: bggThing.compilations,
-        serieses: bggThing.serieses,
-        franchises: bggThing.franchises,
-        platforms: bggThing.platforms,
-        themes: bggThing.themes,
-        modes: bggThing.modes,
-        issues: bggThing.issues,
-        suggestedLanguageDependence: bggThing.suggestedLanguageDependence,
-        suggestedRating: bggThing.suggestedRating,
-        suggestedWeight: bggThing.suggestedWeight,
+    const matchingIds = (await (await con()).manager
+      .getRepository(ScrapeProgress)
+      .createQueryBuilder('scrape_progress')
+      .where(`scrape_progress.index IN (${bggIds.join(',')})`)
+      .andWhere("scrape_progress.name = 'thing'")
+      .getMany()
+    ).map((scrapeProgress: ScrapeProgress) => scrapeProgress.index);
 
-        amazonPrice: amazonThing.price,
-        amazonLink: amazonThing.link,
-      };
-    });
-    await submitThings(things);
+    bggIds = bggIds.filter((id) => matchingIds.indexOf(id) === -1);
+
+    if (bggIds.length > 0) {
+      const amazonThings = await getAmazonThingsByBGGId(bggIds);
+      const things: IThing[] = bggThings.map((bggThing: IBGGThing) => {
+        const matchingAmazonThings = amazonThings.filter((aThing: IAmazonThing) => aThing.id === bggThing.id);
+        const amazonThing: IAmazonThing = matchingAmazonThings.length > 0 &&
+          matchingAmazonThings[0] || {id: bggThing.id};
+
+        return {
+          type: bggThing.type,
+          id: bggThing.id,
+          thumbnail: bggThing.thumbnail,
+          image: bggThing.image,
+          name: bggThing.name,
+          description: bggThing.description,
+          datePublished: bggThing.yearPublished,
+          minPlayers: bggThing.minPlayers,
+          maxPlayers: bggThing.maxPlayers,
+          playingTime: bggThing.playingTime,
+          minPlayTime: bggThing.minPlayTime,
+          maxPlayTime: bggThing.maxPlayTime,
+          minAge: bggThing.minAge,
+          categories: bggThing.categories,
+          mechanics: bggThing.mechanics,
+          families: bggThing.families,
+          expansions: bggThing.expansions,
+          designers: bggThing.designers,
+          artists: bggThing.artists,
+          publishers: bggThing.publishers,
+          producers: bggThing.producers,
+          genres: bggThing.genres,
+          integrations: bggThing.integrations,
+          accessories: bggThing.accessories,
+          compilations: bggThing.compilations,
+          serieses: bggThing.serieses,
+          franchises: bggThing.franchises,
+          platforms: bggThing.platforms,
+          themes: bggThing.themes,
+          modes: bggThing.modes,
+          issues: bggThing.issues,
+          suggestedLanguageDependence: bggThing.suggestedLanguageDependence,
+          suggestedRating: bggThing.suggestedRating,
+          suggestedWeight: bggThing.suggestedWeight,
+
+          amazonPrice: amazonThing.price,
+          amazonLink: amazonThing.link,
+        };
+      });
+      await submitThings(things);
+    }
+
     processPage(page + 1);
   };
-  processPage(0);
+
+  const startingIndex =
+    Math.floor(
+      ((await (await con())
+        .getRepository(ScrapeProgress)
+        .createQueryBuilder('scrape_progress')
+        .where("scrape_progress.name = 'thing'")
+        .take(1)
+        .orderBy('scrape_progress.index', 'DESC')
+        .getOne()
+      ) || {index: 0}).index / PAGE_SIZE,
+    );
+
+  log(`Starting @ Page ${startingIndex}`);
+
+  processPage(startingIndex);
 })();

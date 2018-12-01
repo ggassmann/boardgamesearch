@@ -15,7 +15,7 @@ export class ScrapeProgress {
 
   @Column({
     type: 'varchar',
-    length: 75,
+    length: 15,
   })
   public name: string;
 
