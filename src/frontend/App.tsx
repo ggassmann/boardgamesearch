@@ -15,9 +15,10 @@ import { GlobalStyle } from './GlobalStyle';
 import { useFetch } from './lib/useFetch';
 import styled from './styled';
 
-interface IHeaderLinkProps extends Link {
+interface IHeaderLinkProps {
   hideAfter?: number;
   hideBefore?: number;
+  to: string;
 }
 
 const HeaderLink: StyledComponent<
