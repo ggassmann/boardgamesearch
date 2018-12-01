@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
+import { StyledComponent } from 'styled-components';
 
 import { SearchInput } from 'src/frontend/components/SearchInput';
 import IndexPage from 'src/frontend/routes/IndexPage/IndexPage';
@@ -14,12 +15,16 @@ import { GlobalStyle } from './GlobalStyle';
 import { useFetch } from './lib/useFetch';
 import styled from './styled';
 
-interface IHeaderLinkProps {
+interface IHeaderLinkProps extends Link {
   hideAfter?: number;
   hideBefore?: number;
 }
 
-const HeaderLink = styled(Link)`
+const HeaderLink: StyledComponent<
+    'div', null, IHeaderLinkProps
+  > = styled(
+    ({hideAfter, hideBefore, ...props}: IHeaderLinkProps) => <Link {...props}/>,
+  )`
   flex-grow: 1;
   font-size: 2rem;
   padding-right: 1rem;

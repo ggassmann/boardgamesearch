@@ -10,7 +10,7 @@ const production = process.env.NODE_ENV === 'production';
 
 const dirs = p => readdirSync(p).filter(f => statSync(join(p, f)).isDirectory())
 
-const services = dirs(__dirname);
+const services = dirs(__dirname).filter((v) => !/entities/.test(v));
 let serviceEntryPoints = {};
 services.forEach((service) => {
   serviceEntryPoints[service] = ['source-map-support/register', '@babel/polyfill', path.resolve(__dirname, `${service}/index.ts`)];

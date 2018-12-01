@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import * as accounting from 'accounting';
 import Bottleneck from 'bottleneck';
 import * as cheerio from 'cheerio';
@@ -6,10 +8,20 @@ import * as puppeteer from 'puppeteer';
 import { IThing } from 'src/lib/IThing';
 import { error, log } from 'src/lib/log';
 import { origin as solrOrigin } from 'src/services/solr';
+import { con } from '../database';
+import { ScrapeProgress, ScrapeStatus } from '../entities/ScrapeProgress';
+
+const refLink = [
+  'ref=as_li_ss_tl?ie=UTF8',
+  'linkCode=ll1',
+  'tag=bgsearch02-20',
+  'linkId=766fe3e9fae54566f7dcff23da189da3',
+  'language=en_US',
+].join('&');
 
 const amazonScrapeLimiter = new Bottleneck({
   maxConcurrent: 2,
-  minTime: 2500,
+  minTime: 2000,
 });
 const solrLimiter = new Bottleneck({
   maxConcurrent: 1,
@@ -18,6 +30,7 @@ const solrLimiter = new Bottleneck({
 
 interface IAmazonThing {
   price?: number;
+  link?: string;
   id: number;
 }
 
@@ -41,10 +54,16 @@ interface IAmazonThing {
         },
         body: JSON.stringify({
           commit: {},
-          optimize: { waitSearcher: false },
         }),
       });
       const commitData = await commitResponse.json();
+
+      const sp = new ScrapeProgress();
+      sp.index = thing.id;
+      sp.name = 'amazon',
+      sp.status = ScrapeStatus.finished;
+      (await con()).manager.save(sp);
+
       log(`SOLR Bottleneck: ${solrLimiter.counts().QUEUED}`);
     } catch (e) {
       log(e);
@@ -89,30 +108,47 @@ interface IAmazonThing {
     await browserPage.goto(amazonSearchURL);
     const searchContent = cheerio.load(await browserPage.content());
     if (searchContent('#noResultsTitle').text().length > 0) {
-      log('Found no results for', thing.name);
+      const sp = new ScrapeProgress();
+      sp.index = thing.id;
+      sp.name = 'amazon',
+      sp.status = ScrapeStatus.doesNotExist;
+      (await con()).manager.save(sp);
       return;
     }
-    const searchResultURL = searchContent('#result_0 > div > div:nth-child(5) > div:nth-child(1) > a').attr('href');
-    const absoluteSearchResultURL = searchResultURL.startsWith('/') ? (
-      `https://www.amazon.com${searchResultURL}`
-    ) : (
-      searchResultURL
-    );
-
     try {
+      const searchResultURL = searchContent('#result_0 > div > div:nth-child(5) > div:nth-child(1) > a').attr('href');
+      const absoluteSearchResultURL = searchResultURL.startsWith('/') ? (
+        `https://www.amazon.com${searchResultURL}`
+      ) : (
+        searchResultURL
+      );
+
       await browserPage.goto(absoluteSearchResultURL);
       const searchResultContent = cheerio.load(await browserPage.content());
       const price = accounting.unformat(searchResultContent('#priceblock_ourprice').text());
+      const link = `${absoluteSearchResultURL}&${refLink}`;
 
       log(thing.name, price);
       submitSolrItem({
         id: thing.id,
         price,
+        link,
       });
 
-      return price;
+      setTimeout(() => {
+        try {
+          browserPage.close();
+        } catch (e) {
+          log('Failed to close page');
+        }
+      }, 25);
     } catch (e) {
-      log(`Error reaching ${searchResultURL} for ${thing.name}`);
+      log(`Error reaching ${thing.name}`);
+      const sp = new ScrapeProgress();
+      sp.index = thing.id;
+      sp.name = 'amazon',
+      sp.status = ScrapeStatus.errorOccured;
+      (await con()).manager.save(sp);
       error(e.message);
     }
   };
@@ -120,7 +156,27 @@ interface IAmazonThing {
   const browser = await puppeteer.launch({
     executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
   });
-  for (let i = 1; i < 50000; i++) {
-    amazonScrapeLimiter.schedule(async () => await processThing(i));
+  const lastProgress =
+    (await (await con())
+      .getRepository(ScrapeProgress)
+      .createQueryBuilder('scrape_progress')
+      .where("scrape_progress.name = 'amazon'")
+      .take(1)
+      .orderBy('scrape_progress.index', 'DESC')
+      .getOne()
+    );
+  for (let i = lastProgress && lastProgress.index || 0; i < 600000; i++) {
+    const matchingScrapeProgress = (await (await con())
+      .getRepository(ScrapeProgress)
+      .createQueryBuilder('scrape_progress')
+      .where("scrape_progress.name = 'amazon'")
+      .andWhere(`scrape_progress.index = ${i}`)
+      .getOne()
+    );
+    if (!matchingScrapeProgress) {
+      amazonScrapeLimiter.schedule(() => processThing(i));
+    } else {
+      log('Skipping', i);
+    }
   }
 })();

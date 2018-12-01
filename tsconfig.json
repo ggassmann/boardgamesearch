@@ -13,6 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "baseUrl": "./",
+    "emitDecoratorMetadata": true,
     "paths": {
       "src/*": [
         "src/*"
