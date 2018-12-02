@@ -10,6 +10,7 @@ import { error, log } from 'src/lib/log';
 import { origin as solrOrigin } from 'src/services/solr';
 import { con } from '../database';
 import { ScrapeProgress, ScrapeStatus } from '../entities/ScrapeProgress';
+import { IAmazonThing } from './IAmazonThing';
 
 const refLink = [
   'ref=as_li_ss_tl?ie=UTF8',
@@ -20,19 +21,13 @@ const refLink = [
 ].join('&');
 
 const amazonScrapeLimiter = new Bottleneck({
-  maxConcurrent: 2,
-  minTime: 2000,
+  maxConcurrent: 1,
+  minTime: 1000,
 });
 const solrLimiter = new Bottleneck({
   maxConcurrent: 1,
   minTime: 5000,
 });
-
-interface IAmazonThing {
-  price?: number;
-  link?: string;
-  id: number;
-}
 
 (async () => {
   async function submitSolrItem(thing: IAmazonThing): Promise<any> {
@@ -63,8 +58,6 @@ interface IAmazonThing {
       sp.name = 'amazon',
       sp.status = ScrapeStatus.finished;
       (await con()).manager.save(sp);
-
-      log(`SOLR Bottleneck: ${solrLimiter.counts().QUEUED}`);
     } catch (e) {
       log(e);
       return solrLimiter.schedule(async () => await submitSolrItem(thing));
@@ -73,14 +66,13 @@ interface IAmazonThing {
 
   const getThingByID = async (id: number): Promise<IThing> => {
     const solrQuery = [
-      `${solrOrigin}boardgame/select?`,
+      `${solrOrigin}boardgamegeek/select?`,
       [
         `q=id:${id}`,
         'fl=*',
       ].join('&'),
     ].join('');
     try {
-      console.log(solrQuery);
       const response = await fetch(solrQuery);
       const responseJson = await response.json();
       if (responseJson.error) {

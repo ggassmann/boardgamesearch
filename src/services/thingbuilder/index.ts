@@ -11,7 +11,7 @@ import { con } from '../database';
 import { ScrapeProgress, ScrapeStatus } from '../entities/ScrapeProgress';
 import { origin as solrOrigin } from '../solr';
 
-const PAGE_SIZE = 250;
+const PAGE_SIZE = 350;
 
 (async () => {
   const getPageOfBGGThings = async (page: number): Promise<IBGGThing[]> => {
