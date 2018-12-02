@@ -58,12 +58,14 @@ const Product = ({ item }: IProductPropTypes) => (
           <Box grow={0} basis={'64px'}>
             {item.amazonPrice &&
               <Flex column={true}>
-                <Box>
-                    {formatMoney(item.amazonPrice)}
-                </Box>
-                <Box>
-                  <img src={require('src/image/vendor/amazon-logo_black.jpg')}/>
-                </Box>
+                <a href={item.amazonLink} rel='noopener'>
+                  <Box>
+                      {formatMoney(item.amazonPrice)}
+                  </Box>
+                  <Box>
+                    <img src={require('src/image/vendor/amazon-logo_black.jpg')}/>
+                  </Box>
+                </a>
               </Flex>
             }
           </Box>
