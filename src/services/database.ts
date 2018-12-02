@@ -17,10 +17,10 @@ export const con = async (): Promise<Connection> => {
 
 createConnection({
     type: 'mysql',
-    host: 'gavingassmann.com',
-    port: 3306,
-    username: 'ggassmann',
-    password: '#Gigimoi00',
+    host: CFG.DEV_DATABASE.host,
+    port: CFG.DEV_DATABASE.port,
+    username: CFG.DEV_DATABASE.username,
+    password: CFG.DEV_DATABASE.password,
     database: 'boardgamesearch',
     entities: [
       ScrapeProgress,
