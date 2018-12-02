@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 
-import Bottleneck from 'bottleneck';
 import fetch from 'node-fetch';
 
 import { IThing } from 'src/lib/IThing';
@@ -12,6 +11,9 @@ import { ScrapeProgress, ScrapeStatus } from '../entities/ScrapeProgress';
 import { origin as solrOrigin } from '../solr';
 
 const PAGE_SIZE = 350;
+const MAX_PAGE = Math.ceil(600000 / PAGE_SIZE);
+
+log('Max Page', MAX_PAGE);
 
 (async () => {
   const getPageOfBGGThings = async (page: number): Promise<IBGGThing[]> => {
@@ -66,82 +68,95 @@ const PAGE_SIZE = 350;
       }),
     });
     const commitData = await commitResponse.json();
+    const newEntities: ScrapeProgress[] = [];
     things.forEach(async (thing: IBGGThing) => {
       const sp = new ScrapeProgress();
       sp.index = thing.id;
       sp.name = 'thing',
       sp.status = ScrapeStatus.finished;
-      (await con()).manager.save(sp);
+      newEntities.push(sp);
     });
+    (await con()).createQueryBuilder()
+      .delete()
+      .from(ScrapeProgress)
+      .where(`index IN (${things.map((thing) => thing.id).join(',')})`)
+      .execute();
+    (await con()).manager.save(newEntities);
   };
   const processPage = async (page: number) => {
     const bggThings: IBGGThing[] = await getPageOfBGGThings(page);
     let bggIds = bggThings.map((bggThing) => bggThing.id);
 
-    const matchingIds = (await (await con()).manager
-      .getRepository(ScrapeProgress)
-      .createQueryBuilder('scrape_progress')
-      .where(`scrape_progress.index IN (${bggIds.join(',')})`)
-      .andWhere("scrape_progress.name = 'thing'")
-      .getMany()
-    ).map((scrapeProgress: ScrapeProgress) => scrapeProgress.index);
-
-    bggIds = bggIds.filter((id) => matchingIds.indexOf(id) === -1);
-
     if (bggIds.length > 0) {
-      const amazonThings = await getAmazonThingsByBGGId(bggIds);
-      const things: IThing[] = bggThings.map((bggThing: IBGGThing) => {
-        const matchingAmazonThings = amazonThings.filter((aThing: IAmazonThing) => aThing.id === bggThing.id);
-        const amazonThing: IAmazonThing = matchingAmazonThings.length > 0 &&
-          matchingAmazonThings[0] || {id: bggThing.id};
+      const matchingIds = (await (await con()).manager
+        .getRepository(ScrapeProgress)
+        .createQueryBuilder('scrape_progress')
+        .where(`scrape_progress.index IN (${bggIds.join(',')})`)
+        .andWhere("scrape_progress.name = 'thing'")
+        .getMany()
+      ).map((scrapeProgress: ScrapeProgress) => scrapeProgress.index);
 
-        return {
-          type: bggThing.type,
-          id: bggThing.id,
-          thumbnail: bggThing.thumbnail,
-          image: bggThing.image,
-          name: bggThing.name,
-          description: bggThing.description,
-          datePublished: bggThing.yearPublished,
-          minPlayers: bggThing.minPlayers,
-          maxPlayers: bggThing.maxPlayers,
-          playingTime: bggThing.playingTime,
-          minPlayTime: bggThing.minPlayTime,
-          maxPlayTime: bggThing.maxPlayTime,
-          minAge: bggThing.minAge,
-          categories: bggThing.categories,
-          mechanics: bggThing.mechanics,
-          families: bggThing.families,
-          expansions: bggThing.expansions,
-          designers: bggThing.designers,
-          artists: bggThing.artists,
-          publishers: bggThing.publishers,
-          producers: bggThing.producers,
-          genres: bggThing.genres,
-          integrations: bggThing.integrations,
-          accessories: bggThing.accessories,
-          compilations: bggThing.compilations,
-          serieses: bggThing.serieses,
-          franchises: bggThing.franchises,
-          platforms: bggThing.platforms,
-          themes: bggThing.themes,
-          modes: bggThing.modes,
-          issues: bggThing.issues,
-          suggestedLanguageDependence: bggThing.suggestedLanguageDependence,
-          suggestedRating: bggThing.suggestedRating,
-          suggestedWeight: bggThing.suggestedWeight,
+      bggIds = bggIds.filter((id) => matchingIds.indexOf(id) === -1);
 
-          amazonPrice: amazonThing.price,
-          amazonLink: amazonThing.link,
-        };
-      });
-      await submitThings(things);
+      if (bggIds.length > 0) {
+        const amazonThings = await getAmazonThingsByBGGId(bggIds);
+        const things: IThing[] = bggThings.map((bggThing: IBGGThing) => {
+          const matchingAmazonThings = amazonThings.filter((aThing: IAmazonThing) => aThing.id === bggThing.id);
+          const amazonThing: IAmazonThing = matchingAmazonThings.length > 0 &&
+            matchingAmazonThings[0] || {id: bggThing.id};
+
+          return {
+            type: bggThing.type,
+            id: bggThing.id,
+            thumbnail: bggThing.thumbnail,
+            image: bggThing.image,
+            name: bggThing.name,
+            description: bggThing.description,
+            datePublished: bggThing.yearPublished,
+            minPlayers: bggThing.minPlayers,
+            maxPlayers: bggThing.maxPlayers,
+            playingTime: bggThing.playingTime,
+            minPlayTime: bggThing.minPlayTime,
+            maxPlayTime: bggThing.maxPlayTime,
+            minAge: bggThing.minAge,
+            categories: bggThing.categories,
+            mechanics: bggThing.mechanics,
+            families: bggThing.families,
+            expansions: bggThing.expansions,
+            designers: bggThing.designers,
+            artists: bggThing.artists,
+            publishers: bggThing.publishers,
+            producers: bggThing.producers,
+            genres: bggThing.genres,
+            integrations: bggThing.integrations,
+            accessories: bggThing.accessories,
+            compilations: bggThing.compilations,
+            serieses: bggThing.serieses,
+            franchises: bggThing.franchises,
+            platforms: bggThing.platforms,
+            themes: bggThing.themes,
+            modes: bggThing.modes,
+            issues: bggThing.issues,
+            suggestedLanguageDependence: bggThing.suggestedLanguageDependence,
+            suggestedRating: bggThing.suggestedRating,
+            suggestedWeight: bggThing.suggestedWeight,
+
+            amazonPrice: amazonThing.price,
+            amazonLink: amazonThing.link,
+          };
+        });
+        await submitThings(things);
+      }
     }
 
-    processPage(page + 1);
+    if (page >= MAX_PAGE) {
+      processPage(0);
+    } else {
+      processPage(page + 1);
+    }
   };
 
-  const startingIndex =
+  let startingIndex =
     Math.floor(
       ((await (await con())
         .getRepository(ScrapeProgress)
@@ -152,6 +167,10 @@ const PAGE_SIZE = 350;
         .getOne()
       ) || {index: 0}).index / PAGE_SIZE,
     );
+
+  if (startingIndex > MAX_PAGE) {
+    startingIndex = 0;
+  }
 
   log(`Starting @ Page ${startingIndex}`);
 
