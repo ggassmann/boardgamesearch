@@ -119,7 +119,7 @@ const solrLimiter = new Bottleneck({
       await browserPage.goto(absoluteSearchResultURL);
       const searchResultContent = cheerio.load(await browserPage.content());
       const price = accounting.unformat(searchResultContent('#priceblock_ourprice').text());
-      const link = `${absoluteSearchResultURL}&${refLink}`;
+      const link = `${browserPage.url()}&${refLink}`;
 
       log(thing.name, price);
       submitSolrItem({
