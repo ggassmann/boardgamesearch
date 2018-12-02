@@ -27,7 +27,7 @@ const solrSearch = async (query: string, filters: ISearchFilter[] = []) => {
       'q.alt=*:*',
       'qf=_text_ name^15 description',
       'fq=type:boardgame',
-      'fl=score,name,id,suggestedRating,thumbnail,categories',
+      'fl=score,name,id,suggestedRating,thumbnail,categories,amazonPrice,amazonLink',
       'facet=on',
       'facet.limit=-1',
       ...facets.map((field) => `facet.field=${field}`),

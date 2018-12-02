@@ -35,6 +35,10 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
         enforce: "pre"
       }, {
         test: /\.(gif|jpe?g|png)(\?.*)?$/,
+        use: {
+          loader: 'file-loader',
+        }
+        /*
         loader: 'sharp-loader',
         query: {
           name: '[name].[hash:8].[ext]',
@@ -77,6 +81,7 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
             },
           },
         },
+        */
       },
     ]
   },

@@ -1,3 +1,4 @@
+import {formatMoney} from 'accounting';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import slugify from 'slugify';
@@ -50,13 +51,33 @@ const Product = ({ item }: IProductPropTypes) => (
   <li>
     <ProductContainer to={`/item/${item.id}/${slugify(item.name).toLowerCase()}`}>
       <Card hoverEffect={true} onMouseOver={ProductPageLoadable.preload}>
-        <h3>{item.name}</h3>
+        <Flex row={true}>
+          <Box>
+            <h3>{item.name}</h3>
+          </Box>
+          <Box grow={0} basis={'64px'}>
+            {item.amazonPrice &&
+              <Flex column={true}>
+                <Box>
+                    {formatMoney(item.amazonPrice)}
+                </Box>
+                <Box>
+                  <img src={require('src/image/vendor/amazon-logo_black.jpg')}/>
+                </Box>
+              </Flex>
+            }
+          </Box>
+        </Flex>
         <Flex>
           <ProductImageThumbnailContainer>
             <ProductImageThumbnail src={item.thumbnail} alt='' />
           </ProductImageThumbnailContainer>
           <ProductInfoContainer>
-            <p>Rating: {item.suggestedRating || '?'}</p>
+            <Flex>
+              <Box>
+                <p>Rating: {item.suggestedRating || '?'}</p>
+              </Box>
+            </Flex>
           </ProductInfoContainer>
         </Flex>
       </Card>
