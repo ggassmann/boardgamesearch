@@ -76,11 +76,13 @@ log('Max Page', MAX_PAGE);
       sp.status = ScrapeStatus.finished;
       newEntities.push(sp);
     });
+    /*
     (await con()).createQueryBuilder()
       .delete()
       .from(ScrapeProgress)
       .where(`index IN (${things.map((thing) => thing.id).join(',')})`)
       .execute();
+    */
     (await con()).manager.save(newEntities);
   };
   const processPage = async (page: number) => {
