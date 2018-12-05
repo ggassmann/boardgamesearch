@@ -1,4 +1,4 @@
-import {formatMoney} from 'accounting';
+import { formatMoney } from 'accounting';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import slugify from 'slugify';
@@ -26,7 +26,7 @@ const ProductContainer = styled(Link)`
   text-decoration: none;
   display: block;
 
-  padding: 1em;
+  margin: 1em;
 `;
 
 const ProductImageThumbnailContainer = styled(Box).attrs({
@@ -60,10 +60,10 @@ const Product = ({ item }: IProductPropTypes) => (
               <Flex column={true}>
                 <a href={item.amazonLink} rel='noopener'>
                   <Box>
-                      {formatMoney(item.amazonPrice)}
+                    {formatMoney(item.amazonPrice)}
                   </Box>
                   <Box>
-                    <img src={require('src/image/vendor/amazon-logo_black.jpg')}/>
+                    <img src={require('src/image/vendor/amazon-logo_black.jpg')} />
                   </Box>
                 </a>
               </Flex>
