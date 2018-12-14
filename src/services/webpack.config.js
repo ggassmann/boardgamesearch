@@ -26,7 +26,7 @@ module.exports = {
     },
     serviceEntryPoints,
   ),
-  mode: production ? 'production' : 'development',
+  mode: 'development',
   devtool: production ? 'source-map' : 'inline-source-map',
   target: 'node',
   node: {

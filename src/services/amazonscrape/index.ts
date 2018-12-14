@@ -10,6 +10,7 @@ import { error, log } from 'src/lib/log';
 import { origin as solrOrigin } from 'src/services/solr';
 import { con } from '../database';
 import { ScrapeProgress, ScrapeStatus } from '../entities/ScrapeProgress';
+import { chromeBinary } from '../serviceorigins';
 import { IAmazonThing } from './IAmazonThing';
 
 const refLink = [
@@ -147,7 +148,7 @@ const solrLimiter = new Bottleneck({
   };
 
   const browser = await puppeteer.launch({
-    executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    executablePath: chromeBinary,
   });
   const lastProgress =
     (await (await con())
