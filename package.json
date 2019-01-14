@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "analyze": "cross-env ANALYZE=true yarn build:frontend",
     "build": "yarn build:frontend && yarn build:services",
     "build:frontend": "cross-env NODE_ENV=production webpack",
     "build:services": "cross-env NODE_ENV=production webpack --config src/services/webpack.config.js",

@@ -21,6 +21,11 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
     contentBase: './public',
     hot: false//true
   },
+  optimization: {
+    splitChunks: {
+      chunks: "all"
+    }
+  },
   module: {
     rules: [
       {
@@ -109,7 +114,7 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
     ...(analyze ? [new BundleAnalyzerPlugin()] : []),
   ],
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].[chunkhash].bundle.js',
     path: path.resolve(__dirname, 'public/frontend/'),
     publicPath: '/',
   }

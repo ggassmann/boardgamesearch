@@ -9,16 +9,22 @@ interface IIndexPageProps {
   products: any;
   productsStatus: number;
   headerSearchFilters: ISearchFilter[];
+  finalizeLoadable: () => void;
 }
 
-export default ({ products, productsStatus, headerSearchFilters}: IIndexPageProps) => {
+export default ({ products, productsStatus, headerSearchFilters, finalizeLoadable}: IIndexPageProps) => {
+  const [hasCompletedFirstFetch, setHasCompletedFirstFetch] = React.useState(false);
+  if (!hasCompletedFirstFetch && productsStatus === FETCH_STATUS_SUCCESS) {
+    finalizeLoadable();
+    setHasCompletedFirstFetch(true);
+  }
   return (
     <>
       <FiltersView searchFilters={headerSearchFilters}/>
       {productsStatus === FETCH_STATUS_SUCCESS &&
         <ProductList products={products}/>
       }
-      {productsStatus === FETCH_STATUS_FETCHING &&
+      {hasCompletedFirstFetch && productsStatus === FETCH_STATUS_FETCHING &&
         <SquarePageLoader/>
       }
     </>

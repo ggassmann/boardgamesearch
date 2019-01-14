@@ -13,6 +13,7 @@ import { Flex } from './components/Flex';
 import { Typeography } from './components/Typeography';
 import { GlobalStyle } from './GlobalStyle';
 import { useFetch } from './lib/useFetch';
+import { IndexPageLoadable } from './routes/IndexPage/IndexPageLoadable';
 import styled from './styled';
 
 interface IHeaderLinkProps {
@@ -86,7 +87,7 @@ export const App = () => {
               exact={true}
               path='/'
               render={() => (
-                <IndexPage
+                <IndexPageLoadable
                   products={products}
                   productsStatus={productsStatus}
                   headerSearchFilters={stateSearchFilters}
