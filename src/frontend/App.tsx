@@ -16,6 +16,7 @@ import { IndexPageLoadable } from './routes/IndexPage/IndexPageLoadable';
 import { AccountPageLoadable } from './routes/User/Account/AccountPageLoadable';
 import { SignInPageLoadable } from './routes/User/SignInPage/SignInPageLoadable';
 import { SignUpPageLoadable } from './routes/User/SignUpPage/SignUpPageLoadable';
+import { GlobalStoreInstance } from './stores/GlobalStore';
 import styled, { css } from './styled';
 
 interface IHeaderLinkProps {
@@ -52,6 +53,35 @@ const HeaderAccountLink = styled(HeaderLink)`
   display: block;
 `;
 
+interface IHeaderAvatarProps {
+  src: string;
+  to: string;
+}
+const HeaderAvatar: StyledComponent<
+  'div', null, IHeaderAvatarProps
+  > = styled(
+    ({src, ...props }: IHeaderAvatarProps) => <Link {...props} />,
+  )`
+  display: block;
+  background: url('${(props: IHeaderAvatarProps) => props.src}');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 10%;
+  border-radius: 50%;
+  border: 2px solid rgba(50, 50, 50, 0.6);
+  width: 40px;
+  height: 40px;
+  margin: 1px;
+  margin-left: 0.5em;
+
+  transition: border 0.5s;
+
+  &:hover {
+    border: 2px solid rgba(240, 240, 240, 0.95);
+    transition: border 0.15s;
+  }
+`;
+
 const SMALL_HEADER_CUTOFF = 380;
 
 export const App = () => {
@@ -67,6 +97,9 @@ export const App = () => {
       filters: stateSearchFilters,
     },
   });
+
+  const globalStore = GlobalStoreInstance.useStore();
+  GlobalStoreInstance.populateAccount(globalStore.setState);
 
   return (
     <>
@@ -93,12 +126,20 @@ export const App = () => {
                 />
               </Box>
               <Box grow={0}>
-                <HeaderAccountLink to='/user/login'>
-                  Log&nbsp;In
-                </HeaderAccountLink>
-                <HeaderAccountLink to='/user/signup'>
-                  Sign&nbsp;Up
-                </HeaderAccountLink>
+                {globalStore.state.avatar &&
+                  <>
+                    <HeaderAvatar to='/user/account' src={globalStore.state.avatar}/>
+                  </>
+                ||
+                  <>
+                    <HeaderAccountLink to='/user/login'>
+                      Log&nbsp;In
+                    </HeaderAccountLink>
+                    <HeaderAccountLink to='/user/signup'>
+                      Sign&nbsp;Up
+                    </HeaderAccountLink>
+                  </>
+                }
               </Box>
             </Flex>
           </AppBar>
