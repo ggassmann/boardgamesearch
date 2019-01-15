@@ -2,10 +2,13 @@ import * as core from 'express-serve-static-core';
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import { log } from 'src/lib/log';
+import { con } from 'src/services/database';
+import { User } from 'src/services/entities/User';
 
 const defaultScope = [
   'https://www.googleapis.com/auth/plus.me',
   'https://www.googleapis.com/auth/userinfo.email',
+  'profile',
 ];
 
 function createConnection() {
@@ -40,9 +43,35 @@ export const init = (app: core.Express) => {
 
     const auth = createConnection();
     auth.setCredentials(tokens);
-    const plus = google.plus('v1');
-    log(await plus.people.get({ userId: 'me', auth }));
+    const people = google.people({version: 'v1', auth});
+    const peopleResponse = await people.people.get({
+      resourceName: 'people/me',
+      personFields: 'names,emailAddresses',
+    });
+    const name = peopleResponse.data.names[0].displayName;
+    const email = peopleResponse.data.emailAddresses[0].value;
+    const oauthName = `oauth/google/${peopleResponse.data.resourceName.replace('people/', '')}`;
 
-    res.send({ token: tokens });
+    const generatedUser = new User();
+    generatedUser.email = email;
+    generatedUser.displayName = name;
+    generatedUser.oauthName = oauthName;
+
+    let currentUser = await (await con())
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .where('user.oauthName = :oauthName', generatedUser)
+      .getOne();
+
+    if (!currentUser) {
+      (await con()).createQueryBuilder()
+        .insert()
+        .into(User)
+        .values(generatedUser)
+        .execute();
+      currentUser = generatedUser;
+    }
+
+    res.send(currentUser);
   });
 };

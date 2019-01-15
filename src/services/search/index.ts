@@ -5,6 +5,7 @@ import * as express from 'express';
 import fetch from 'node-fetch';
 import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { log } from 'src/lib/log';
+import { con } from 'src/services/database';
 import { searchOriginPath } from 'src/services/serviceorigins';
 import { origin as solrOrigin } from 'src/services/solr';
 
@@ -97,7 +98,5 @@ app.get(`${searchOriginPath}item/:id`, async (req, res) => {
     res.send(500);
   }
 });
-
-console.log(CFG);
 
 app.listen(CFG.SEARCH_PORT, () => log(`Search Service Listening on ${CFG.SEARCH_PORT}`));

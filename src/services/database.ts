@@ -1,5 +1,6 @@
 import { log } from 'src/lib/log';
 import {ScrapeProgress} from 'src/services/entities/ScrapeProgress';
+import {User} from 'src/services/entities/User';
 import {Connection, createConnection} from 'typeorm';
 
 let connection: Connection;
@@ -16,17 +17,19 @@ export const con = async (): Promise<Connection> => {
 };
 
 createConnection({
-    type: 'mysql',
-    host: CFG.DEV_DATABASE.host,
-    port: CFG.DEV_DATABASE.port,
-    username: CFG.DEV_DATABASE.username,
-    password: CFG.DEV_DATABASE.password,
-    database: 'boardgamesearch',
-    entities: [
-      ScrapeProgress,
-    ],
-    synchronize: true,
-    logging: false,
+  type: 'mysql',
+  host: CFG.DEV_DATABASE.host,
+  port: CFG.DEV_DATABASE.port,
+  username: CFG.DEV_DATABASE.username,
+  password: CFG.DEV_DATABASE.password,
+  database: 'boardgamesearch',
+  entities: [
+    ScrapeProgress,
+    User,
+  ],
+  synchronize: true,
+  logging: false,
 }).then((c) => {
+  log('Database connection established');
   connection = c;
 }).catch((error) => log(error));
