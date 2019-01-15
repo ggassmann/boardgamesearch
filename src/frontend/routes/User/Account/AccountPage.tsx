@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCookie } from 'src/frontend/lib/useCookie';
 import { GlobalStoreInstance } from 'src/frontend/stores/GlobalStore';
+import { log } from 'src/lib/log';
 import { host, userOriginPath, userPort } from 'src/services/serviceorigins';
 
 interface IAccountPageProps {
@@ -8,24 +9,17 @@ interface IAccountPageProps {
 }
 
 export default ({finalizeLoadable}: IProductPageProps) => {
-  const [sessionKey, setSessionKey] = useCookie('sessionKey');
   const globalStore = GlobalStoreInstance.useStore();
   GlobalStoreInstance.populateAccount(globalStore.setState);
   finalizeLoadable();
 
-  const logout = () => {
-    setSessionKey(undefined);
-    globalStore.setState({
-      avatar: undefined,
-      displayName: undefined,
-    });
-  };
+  log('rendered', globalStore);
 
   return (
     <div>
       <h1>Account Page</h1>
       Welcome {globalStore.state.displayName}!
-      <a href='#' onClick={logout}>Log Out</a>
+      <a href='#' onClick={() => GlobalStoreInstance.logout(globalStore.setState)}>Log Out</a>
     </div>
   );
 };

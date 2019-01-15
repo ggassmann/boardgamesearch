@@ -1,27 +1,26 @@
 import cookiesjs from 'cookiesjs';
 import { useEffect, useState } from 'react';
+import { IHash } from 'src/lib/IHash';
+import { Container } from './Container';
+
+interface ICookieContainer {
+  value?: any;
+}
+
+class CookieContainer extends Container<ICookieContainer> {}
+
+const cookieContainers: IHash<CookieContainer> = {};
 
 export const useCookie = (name: string, defaultValue?: string) => {
-  const [stateCookieValue, setStateCookieValue] = useState(cookiesjs(name) || defaultValue || undefined);
+  if (!cookieContainers[name]) {
+    cookieContainers[name] = new CookieContainer();
+  }
+  const cookieStore = cookieContainers[name].useStore();
 
   const setCookie = (value: string) => {
     cookiesjs({[name]: value});
-    setStateCookieValue(value);
+    cookieStore.setState({value});
   };
 
-  useEffect(() => {
-    let currentEffectCookieValue = stateCookieValue;
-    const cookieCheckerInterval = setInterval(() => {
-      const nextVal = cookiesjs(name);
-      if (nextVal !== currentEffectCookieValue) {
-        setStateCookieValue(nextVal);
-        currentEffectCookieValue = nextVal;
-      }
-    }, 1000 / 30);
-    return () => {
-      clearInterval(cookieCheckerInterval);
-    };
-  });
-
-  return [stateCookieValue, setCookie];
+  return [cookieStore.state.value, setCookie];
 };

@@ -1,30 +1,49 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { log } from 'src/lib/log';
 import { host, userOriginPath, userPort } from 'src/services/serviceorigins';
 import { Container } from '../lib/Container';
-import { useFetch } from '../lib/useFetch';
+import { useCookie } from '../lib/useCookie';
+import { FETCH_STATUS_SUCCESS, useFetch } from '../lib/useFetch';
 
 export interface IGlobalStoreStateProps {
   displayName?: string;
   avatar?: string;
+  loggedIn?: boolean;
 }
 
 export class GlobalStore extends Container<IGlobalStoreStateProps> {
-  public state: IGlobalStoreStateProps = {
-    displayName: undefined,
-    avatar: undefined,
-  };
+  public state: IGlobalStoreStateProps = {};
+
+  public setSessionKey: (sessionKey: any) => void;
+
+  public useStore() {
+    const [sessionKey, setSessionKey] = useCookie('sessionKey');
+    this.setSessionKey = setSessionKey;
+    return super.useStore();
+  }
+
+  public async logout(setState: (newState: IGlobalStoreStateProps) => void) {
+    this.setSessionKey(undefined);
+    setState({
+      displayName: undefined,
+      avatar: undefined,
+      loggedIn: false,
+    });
+  }
 
   public async populateAccount(setState: (newState: IGlobalStoreStateProps) => void, bypassCheck = false) {
-    const [result, resultStatus] = useFetch(`${host}:${userPort}${userOriginPath}account`, undefined);
-    if (result && result.success && (
-      this.state.displayName !== result.user.displayName ||
-      this.state.avatar !== result.user.avatar
-    )) {
-      setState({
-        displayName: result.user.displayName,
-        avatar: result.user.avatar,
-      });
+    const [sessionKey, setSessionKey] = useCookie('sessionKey');
+    if (!this.state.loggedIn && sessionKey) {
+      const result = await (
+        await fetch(`${host}:${userPort}${userOriginPath}account`, {credentials: 'include'})
+      ).json();
+      if (result && result.success) {
+        setState({
+          displayName: result.user.displayName,
+          avatar: result.user.avatar,
+          loggedIn: true,
+        });
+      }
     }
   }
 }
