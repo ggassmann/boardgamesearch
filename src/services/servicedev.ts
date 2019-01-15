@@ -47,7 +47,7 @@ interface INamedServiceBundle extends ChildProcess {
 
   let services = serviceBundles.map((serviceBundle) => {
     let isBuildingNew = false;
-    fs.watch(path.resolve(__dirname, serviceBundle), {}, (event, filename) => {
+    fs.watch(path.resolve(__dirname, serviceBundle), {}, async (event, filename) => {
       const serviceName = filenameToServiceName(filename);
       if (event === 'change') {
         if (isBuildingNew) {
@@ -56,15 +56,17 @@ interface INamedServiceBundle extends ChildProcess {
         isBuildingNew = true;
         log(`Killing old ${serviceName}`);
         const oldService = services.filter((service) => service.name === serviceName)[0];
-        oldService.on('close', () => {
-          const newService = buildService(filename);
-          services = [
-            ...services.filter((service) => service.name !== serviceName),
-            newService,
-          ];
-          setTimeout(() => { isBuildingNew = false; }, 5);
+        await new Promise((resolve, reject) => {
+          oldService.kill('SIGINT');
+          oldService.on('close', resolve);
+          setTimeout(resolve, 1000);
         });
-        oldService.kill('SIGINT');
+        const newService = buildService(filename);
+        services = [
+          ...services.filter((service) => service.name !== serviceName),
+          newService,
+        ];
+        setTimeout(() => { isBuildingNew = false; }, 5);
       }
     });
     return buildService(serviceBundle);

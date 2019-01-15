@@ -2,6 +2,7 @@ import { log } from 'src/lib/log';
 import {ScrapeProgress} from 'src/services/entities/ScrapeProgress';
 import {User} from 'src/services/entities/User';
 import {Connection, createConnection} from 'typeorm';
+import { UserSession } from './entities/UserSession';
 
 let connection: Connection;
 
@@ -26,6 +27,7 @@ createConnection({
   entities: [
     ScrapeProgress,
     User,
+    UserSession,
   ],
   synchronize: true,
   logging: false,

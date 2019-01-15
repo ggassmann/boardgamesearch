@@ -1,5 +1,10 @@
 import { genSalt, hash } from 'src/lib/hash';
-import { AfterLoad, BeforeUpdate, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  AfterLoad, BeforeUpdate, Column, CreateDateColumn,
+  Entity, Index, OneToMany, PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { UserSession } from './UserSession';
 
 @Entity()
 export class User {
@@ -9,7 +14,7 @@ export class User {
   @Index({ unique: true })
   @Column({
     type: 'varchar',
-    length: 15,
+    length: 80,
   })
   public email: string;
 
@@ -28,9 +33,24 @@ export class User {
 
   @Column({
     type: 'varchar',
-    length: 15,
+    length: 255,
+  })
+  public avatar: string;
+
+  @OneToMany((type) => UserSession, (userSession) => userSession.user)
+  public sessions: Promise<UserSession[]>;
+
+  @Column({
+    type: 'varchar',
+    length: 25,
   })
   public password: string;
+
+  @CreateDateColumn()
+  public createdDate: Date;
+
+  @UpdateDateColumn()
+  public updatedDate: Date;
 
   private tempPassword: string;
 

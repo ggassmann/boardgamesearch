@@ -4,6 +4,10 @@ import { google } from 'googleapis';
 import { log } from 'src/lib/log';
 import { con } from 'src/services/database';
 import { User } from 'src/services/entities/User';
+import { UserSession } from 'src/services/entities/UserSession';
+import * as uuidv5 from 'uuid/v5';
+
+const GOOGLE_UUID_NAMESPACE = '630eb68f-e0fa-5ecc-887a-7c7a62614681';
 
 const defaultScope = [
   'https://www.googleapis.com/auth/plus.me',
@@ -46,32 +50,53 @@ export const init = (app: core.Express) => {
     const people = google.people({version: 'v1', auth});
     const peopleResponse = await people.people.get({
       resourceName: 'people/me',
-      personFields: 'names,emailAddresses',
+      personFields: 'names,emailAddresses,photos',
     });
+    const avatar = peopleResponse.data.photos[0].url;
     const name = peopleResponse.data.names[0].displayName;
     const email = peopleResponse.data.emailAddresses[0].value;
-    const oauthName = `oauth/google/${peopleResponse.data.resourceName.replace('people/', '')}`;
+    const oauthName = `google/${peopleResponse.data.resourceName.replace('people/', '')}`;
 
     const generatedUser = new User();
+    generatedUser.avatar = avatar;
     generatedUser.email = email;
     generatedUser.displayName = name;
     generatedUser.oauthName = oauthName;
 
-    let currentUser = await (await con())
-      .getRepository(User)
-      .createQueryBuilder('user')
-      .where('user.oauthName = :oauthName', generatedUser)
-      .getOne();
+    const getUser = async () => {
+      return await (await con())
+        .getRepository(User)
+        .createQueryBuilder('user')
+        .where('user.oauthName = :oauthName', generatedUser)
+        .getOne();
+    };
+
+    let currentUser = await getUser();
 
     if (!currentUser) {
-      (await con()).createQueryBuilder()
+      await (await con()).createQueryBuilder()
         .insert()
         .into(User)
         .values(generatedUser)
         .execute();
-      currentUser = generatedUser;
+      currentUser = await getUser();
     }
 
-    res.send(currentUser);
+    const sessionKey = uuidv5(currentUser.oauthName + process.hrtime()[1], GOOGLE_UUID_NAMESPACE);
+
+    const newSession = new UserSession();
+    newSession.user = currentUser;
+    newSession.sessionKey = sessionKey;
+    (await con()).createQueryBuilder()
+      .insert()
+      .into(UserSession)
+      .values(newSession)
+      .execute();
+
+    res.send({
+      sessionKey,
+      displayName: currentUser.displayName,
+      avatar: currentUser.avatar,
+    });
   });
 };
