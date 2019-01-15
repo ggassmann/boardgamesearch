@@ -11,7 +11,7 @@ import { origin as solrOrigin } from 'src/services/solr';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({credentials: true, origin: 'http://localhost:8080'}));
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => res.send('Hello World!'));

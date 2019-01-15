@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { log } from 'src/lib/log';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
 import { useClickOutside } from './useClickOutside';
 
@@ -40,7 +41,6 @@ export const useFetch = (endpoint: string, startingValue: any, options: any = {}
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'same-origin',
         },
         options,
         {
@@ -49,7 +49,7 @@ export const useFetch = (endpoint: string, startingValue: any, options: any = {}
       );
     }
 
-    const fetchOptions = Object.assign({}, options, {signal});
+    const fetchOptions = Object.assign({}, {credentials: 'include'}, options, {signal});
 
     fetch(`${endpoint}`, fetchOptions).then(async (response) => {
       const data = await response.json();
