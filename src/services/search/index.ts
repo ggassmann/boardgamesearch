@@ -98,4 +98,6 @@ app.get(`${searchOriginPath}item/:id`, async (req, res) => {
   }
 });
 
-app.listen(CFG.SEARCH_PORT, () => log('Search Service Listening!'));
+console.log(CFG);
+
+app.listen(CFG.SEARCH_PORT, () => log(`Search Service Listening on ${CFG.SEARCH_PORT}`));

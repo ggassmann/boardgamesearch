@@ -13,7 +13,11 @@ export const GlobalStyle = createGlobalStyle`
     font-family: 'Roboto', sans-serif;
   }
   a {
-    color: ${getColor({ type: 'font' })};
+    color: ${getColor({ type: 'font', brightness: 'dark', color: 'secondary' })};
+    text-decoration: underline;
+  }
+  div {
+    color: black;
   }
   img {
     width: 100%;

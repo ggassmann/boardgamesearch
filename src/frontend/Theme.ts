@@ -30,7 +30,7 @@ export const getColor = (options: IColorOptions): string => {
   if (options.type === 'font') {
     c = color('black');
     if (options.color === 'secondary' && options.brightness === 'dark') {
-      c = color('white');
+      c = colorSecondaryDark.hsl();
     }
     /*
     if (

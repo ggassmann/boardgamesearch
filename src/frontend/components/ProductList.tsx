@@ -27,22 +27,27 @@ const ProductContainer = styled(Link)`
   display: block;
 
   margin: 1em;
+  margin-bottom: 1.5em;
 `;
 
-const ProductImageThumbnailContainer = styled(Box).attrs({
-  grow: 1,
-})`
-  min-width: 128px;
-`;
-
-const ProductImageThumbnail = styled.img`
-  max-height: 96px;
-  height: 96px;
-  width: auto;
+interface IProductImageThumbnailContainerProps {
+  src: string;
+}
+const ProductImageThumbnailContainer = styled.div`
+  background: url('${({ src }: IProductImageThumbnailContainerProps) => src}');
+  width: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 8em;
+  @media screen and (min-width: 405px) {
+    width: 10em;
+    height: 6em;
+  }
 `;
 
 const ProductInfoContainer = styled(Box).attrs({
-  grow: 5,
+  grow: 1,
 })`
   min-width: 200px;
 `;
@@ -71,9 +76,7 @@ const Product = ({ item }: IProductPropTypes) => (
           </Box>
         </Flex>
         <Flex>
-          <ProductImageThumbnailContainer>
-            <ProductImageThumbnail src={item.thumbnail} alt='' />
-          </ProductImageThumbnailContainer>
+          <ProductImageThumbnailContainer src={item.thumbnail} />
           <ProductInfoContainer>
             <Flex>
               <Box>
