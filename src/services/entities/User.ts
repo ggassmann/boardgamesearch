@@ -38,7 +38,7 @@ export class User {
   public avatar: string;
 
   @OneToMany((type) => UserSession, (userSession) => userSession.user)
-  public sessions: Promise<UserSession[]>;
+  public sessions: UserSession[];
 
   @Column({
     type: 'varchar',

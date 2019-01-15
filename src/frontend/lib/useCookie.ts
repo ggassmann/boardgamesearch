@@ -1,6 +1,5 @@
 import cookiesjs from 'cookiesjs';
 import { useEffect, useState } from 'react';
-import { log } from 'src/lib/log';
 
 export const useCookie = (name: string, defaultValue?: string) => {
   const [stateCookieValue, setStateCookieValue] = useState(cookiesjs(name) || defaultValue || undefined);

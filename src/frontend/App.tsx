@@ -4,7 +4,6 @@ import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 import { StyledComponent } from 'styled-components';
 
 import { SearchInput } from 'src/frontend/components/SearchInput';
-import IndexPage from 'src/frontend/routes/IndexPage/IndexPage';
 import { ProductPageLoadable } from 'src/frontend/routes/ProductPage/ProductPageLoadable';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
 import { AppBar } from './components/AppBar';
@@ -14,8 +13,9 @@ import { Typeography } from './components/Typeography';
 import { GlobalStyle } from './GlobalStyle';
 import { useFetch } from './lib/useFetch';
 import { IndexPageLoadable } from './routes/IndexPage/IndexPageLoadable';
-import { SignInPageLoadable } from './routes/SignInPage/SignInPageLoadable';
-import { SignUpPageLoadable } from './routes/SignUpPage/SignUpPageLoadable';
+import { AccountPageLoadable } from './routes/User/Account/AccountPageLoadable';
+import { SignInPageLoadable } from './routes/User/SignInPage/SignInPageLoadable';
+import { SignUpPageLoadable } from './routes/User/SignUpPage/SignUpPageLoadable';
 import styled, { css } from './styled';
 
 interface IHeaderLinkProps {
@@ -127,6 +127,10 @@ export const App = () => {
             <Route
               path='/user/signin'
               render={({ match }: any) => <SignInPageLoadable />}
+            />
+            <Route
+              path='/user/account'
+              render={({ match }: any) => <AccountPageLoadable />}
             />
           </Switch>
         </>

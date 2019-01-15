@@ -1,4 +1,7 @@
-import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column, CreateDateColumn, Entity, Index,
+  ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn,
+} from 'typeorm';
 import { User } from './User';
 
 @Entity()
@@ -11,7 +14,7 @@ export class UserSession {
 
   @Column({
     type: 'varchar',
-    length: 32,
+    length: 35,
   })
   public sessionKey: string;
 
