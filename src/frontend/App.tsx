@@ -15,7 +15,6 @@ import { useFetch } from './lib/useFetch';
 import { IndexPageLoadable } from './routes/IndexPage/IndexPageLoadable';
 import { AccountPageLoadable } from './routes/User/Account/AccountPageLoadable';
 import { SignInPageLoadable } from './routes/User/SignInPage/SignInPageLoadable';
-import { SignUpPageLoadable } from './routes/User/SignUpPage/SignUpPageLoadable';
 import { GlobalStoreInstance } from './stores/GlobalStore';
 import styled, { css } from './styled';
 
@@ -131,11 +130,8 @@ export const App = () => {
                   </>
                 ||
                   <>
-                    <HeaderAccountLink to='/user/login'>
-                      Log&nbsp;In
-                    </HeaderAccountLink>
-                    <HeaderAccountLink to='/user/signup'>
-                      Sign&nbsp;Up
+                    <HeaderAccountLink to='/user/signin'>
+                      Sign&nbsp;In
                     </HeaderAccountLink>
                   </>
                 }
@@ -158,11 +154,6 @@ export const App = () => {
               exact={true}
               path='/item/:id/:slug'
               render={({ match }: any) => <ProductPageLoadable id={match.params.id} />}
-            />
-            <Route
-              exact={true}
-              path='/user/signup'
-              render={({ match }: any) => <SignUpPageLoadable />}
             />
             <Route
               path='/user/signin'

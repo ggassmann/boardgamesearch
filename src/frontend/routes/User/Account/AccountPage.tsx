@@ -24,11 +24,11 @@ export default ({finalizeLoadable}: IProductPageProps) => {
           <>
             <h1>Account Page</h1>
             Welcome {globalStore.state.displayName}!<br/>
-            <a href='#' onClick={() => GlobalStoreInstance.logout()}>Log Out</a>
+            <a href='' onClick={() => GlobalStoreInstance.logout()}>Log Out</a>
           </>
         }
         {globalStore.state.loggedOut &&
-          <Redirect to='/user/signup'/>
+          <Redirect to='/user/signin'/>
         }
       </>
     </Section>
