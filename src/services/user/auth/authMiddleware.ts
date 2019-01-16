@@ -13,7 +13,6 @@ export const authMiddleware = (next: (req: ISessionRequest, res: core.Response, 
       res.sendStatus(401);
       res.send({success: false});
     };
-    log(req.cookies.sessionKey);
     if (!req.cookies.sessionKey) {
       fail();
       return;

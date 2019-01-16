@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie';
+import * as Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import { IHash } from 'src/lib/IHash';
 import { log } from 'src/lib/log';

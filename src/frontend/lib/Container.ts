@@ -6,6 +6,7 @@ interface IContainerContents<T> {
 }
 
 export class Container<T> extends OriginalContainer {
+  public setState: (state: T) => void;
   public useStore(): IContainerContents<T> {
     const [originalState, originalSetState] = originalUseStore(this);
     const contents: IContainerContents<T> = {

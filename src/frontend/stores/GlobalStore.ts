@@ -24,9 +24,9 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
     return super.useStore();
   }
 
-  public async logout(setState: (newState: IGlobalStoreStateProps) => void) {
+  public async logout() {
     this.setSessionKey(undefined);
-    setState({
+    this.setState({
       displayName: undefined,
       avatar: undefined,
       loggedIn: false,
@@ -34,7 +34,7 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
     });
   }
 
-  public async populateAccount(setState: (newState: IGlobalStoreStateProps) => void, bypassCheck = false) {
+  public async populateAccount(bypassCheck = false) {
     const [sessionKey, setSessionKey] = useCookie('sessionKey');
     if (!this.state.loggedIn && sessionKey) {
       try {
@@ -42,7 +42,7 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
           await fetch(`${host}:${userPort}${userOriginPath}account`, {credentials: 'include'})
         ).json();
         if (result && result.success) {
-          setState({
+          this.setState({
             displayName: result.user.displayName,
             avatar: result.user.avatar,
             loggedIn: true,
@@ -52,8 +52,11 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
           throw result;
         }
       } catch {
-        this.logout(setState);
+        this.logout();
       }
+    }
+    if (!sessionKey) {
+      this.logout();
     }
   }
 }

@@ -12,7 +12,7 @@ interface IAccountPageProps {
 
 export default ({finalizeLoadable}: IProductPageProps) => {
   const globalStore = GlobalStoreInstance.useStore();
-  GlobalStoreInstance.populateAccount(globalStore.setState);
+  GlobalStoreInstance.populateAccount();
   finalizeLoadable();
 
   log('rendered', globalStore);
@@ -24,7 +24,7 @@ export default ({finalizeLoadable}: IProductPageProps) => {
           <>
             <h1>Account Page</h1>
             Welcome {globalStore.state.displayName}!
-            <a href='#' onClick={() => GlobalStoreInstance.logout(globalStore.setState)}>Log Out</a>
+            <a href='#' onClick={() => GlobalStoreInstance.logout()}>Log Out</a>
           </>
         }
         {globalStore.state.loggedOut &&

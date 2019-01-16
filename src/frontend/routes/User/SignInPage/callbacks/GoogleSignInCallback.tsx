@@ -26,9 +26,10 @@ export const GoogleSignInCallback = () => {
   if (codeResponseState === FETCH_STATUS_SUCCESS && sessionKey !== codeResponse.sessionKey) {
     setSessionKey(codeResponse.sessionKey);
   }
+  const loggedIn = sessionKey && codeResponse && codeResponse.sessionKey === sessionKey;
   return (
     <div>
-      {sessionKey && codeResponse && codeResponse.sessionKey === sessionKey &&
+      {loggedIn &&
         <Redirect to='/user/account'/>
       }
     </div>
