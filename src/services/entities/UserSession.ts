@@ -14,7 +14,7 @@ export class UserSession {
 
   @Column({
     type: 'varchar',
-    length: 35,
+    length: 36,
   })
   public sessionKey: string;
 

@@ -14,11 +14,7 @@ const app: core.Express = express();
 
 app.use(cors({credentials: true, origin: 'http://localhost:8080'}));
 app.use(bodyParser.json());
-app.use(cookieParser(undefined, {decode: (x) => {
-  x = decodeURIComponent(x);
-  x = x.substring(1, x.length - 2);
-  return x;
-}}));
+app.use(cookieParser());
 
 app.get('/', (req, res) => res.send('Hello World!'));
 initGoogle(app);

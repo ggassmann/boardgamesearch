@@ -22,16 +22,13 @@ export const GoogleSignInCallback = () => {
     undefined,
   );
   const [sessionKey, setSessionKey] = useCookie('sessionKey');
+  log('Rendered sign in callback', sessionKey, codeResponse);
   if (codeResponseState === FETCH_STATUS_SUCCESS && sessionKey !== codeResponse.sessionKey) {
     setSessionKey(codeResponse.sessionKey);
-    globalStore.setState({
-      displayName: codeResponse.displayName,
-      avatar: codeResponse.avatar,
-    });
   }
   return (
     <div>
-      {codeResponseState === FETCH_STATUS_SUCCESS &&
+      {sessionKey && codeResponse && codeResponse.sessionKey === sessionKey &&
         <Redirect to='/user/account'/>
       }
     </div>

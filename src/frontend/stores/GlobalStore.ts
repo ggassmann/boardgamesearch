@@ -8,7 +8,9 @@ import { FETCH_STATUS_SUCCESS, useFetch } from '../lib/useFetch';
 export interface IGlobalStoreStateProps {
   displayName?: string;
   avatar?: string;
+  loggingIn?: boolean;
   loggedIn?: boolean;
+  loggedOut?: boolean;
 }
 
 export class GlobalStore extends Container<IGlobalStoreStateProps> {
@@ -28,21 +30,29 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
       displayName: undefined,
       avatar: undefined,
       loggedIn: false,
+      loggedOut: true,
     });
   }
 
   public async populateAccount(setState: (newState: IGlobalStoreStateProps) => void, bypassCheck = false) {
     const [sessionKey, setSessionKey] = useCookie('sessionKey');
     if (!this.state.loggedIn && sessionKey) {
-      const result = await (
-        await fetch(`${host}:${userPort}${userOriginPath}account`, {credentials: 'include'})
-      ).json();
-      if (result && result.success) {
-        setState({
-          displayName: result.user.displayName,
-          avatar: result.user.avatar,
-          loggedIn: true,
-        });
+      try {
+        const result = await (
+          await fetch(`${host}:${userPort}${userOriginPath}account`, {credentials: 'include'})
+        ).json();
+        if (result && result.success) {
+          setState({
+            displayName: result.user.displayName,
+            avatar: result.user.avatar,
+            loggedIn: true,
+            loggedOut: false,
+          });
+        } else {
+          throw result;
+        }
+      } catch {
+        this.logout(setState);
       }
     }
   }

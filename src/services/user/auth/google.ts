@@ -95,8 +95,6 @@ export const init = (app: core.Express) => {
 
     res.send({
       sessionKey,
-      displayName: currentUser.displayName,
-      avatar: currentUser.avatar,
     });
   });
 };
