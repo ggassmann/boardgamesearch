@@ -55,7 +55,7 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
         this.logout();
       }
     }
-    if (!sessionKey) {
+    if (!sessionKey && !this.state.loggedOut) {
       this.logout();
     }
   }
