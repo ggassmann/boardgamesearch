@@ -23,7 +23,7 @@ export default ({finalizeLoadable}: IProductPageProps) => {
         {globalStore.state.loggedIn &&
           <>
             <h1>Account Page</h1>
-            Welcome {globalStore.state.displayName}!
+            Welcome {globalStore.state.displayName}!<br/>
             <a href='#' onClick={() => GlobalStoreInstance.logout()}>Log Out</a>
           </>
         }
