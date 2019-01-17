@@ -1,5 +1,5 @@
 import * as keycode from 'keycode';
-import { deburr } from 'lodash';
+import { deburr } from 'lodash/deburr';
 import * as React from 'react';
 import { SyntheticEvent, useState } from 'react';
 
