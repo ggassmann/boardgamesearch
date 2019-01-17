@@ -1,6 +1,7 @@
 const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
@@ -100,6 +101,10 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
     new CleanWebpackPlugin(['public/frontend']),
     new HtmlWebpackPlugin({
       template: 'src/frontend/index.html',
+    }),
+    new ScriptExtHtmlWebpackPlugin({
+      defaultAttribute: 'defer',
+      preload: /.+/g,
     }),
     /*
     new webpack.HotModuleReplacementPlugin()
