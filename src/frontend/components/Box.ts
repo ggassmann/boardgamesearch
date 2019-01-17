@@ -4,7 +4,7 @@ import styled, { css } from '../styled';
 export interface IBoxProps {
   grow?: number;
   shrink?: number;
-  basis?: number;
+  basis?: number | string;
   verticalAlign?: 'center' | 'flex-start' | 'flex-end' | 'baseline' | 'stretch';
   horizontalAlign?: 'center' | 'flex-start' | 'flex-end';
 }

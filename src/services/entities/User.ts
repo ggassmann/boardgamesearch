@@ -46,6 +46,16 @@ export class User {
   })
   public password: string;
 
+  @Column({
+    type: 'tinyint',
+  })
+  public isAdmin: boolean;
+
+  @Column({
+    type: 'int',
+  })
+  public karma: number;
+
   @CreateDateColumn()
   public createdDate: Date;
 

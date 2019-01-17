@@ -5,6 +5,7 @@ import { log } from 'src/lib/log';
 import { con } from 'src/services/database';
 import { User } from 'src/services/entities/User';
 import { UserSession } from 'src/services/entities/UserSession';
+import { userAuthGoogleRedirectURI } from 'src/services/serviceorigins';
 import * as uuidv5 from 'uuid/v5';
 
 const GOOGLE_UUID_NAMESPACE = '630eb68f-e0fa-5ecc-887a-7c7a62614681';
@@ -19,7 +20,7 @@ function createConnection() {
   return new google.auth.OAuth2(
     CFG.GOOGLE_AUTH.client_id,
     CFG.GOOGLE_AUTH.client_secret,
-    CFG.GOOGLE_AUTH.redirect_uris[1],
+    userAuthGoogleRedirectURI,
   );
 }
 
@@ -47,7 +48,7 @@ export const init = (app: core.Express) => {
 
     const auth = createConnection();
     auth.setCredentials(tokens);
-    const people = google.people({version: 'v1', auth});
+    const people = google.people({ version: 'v1', auth });
     const peopleResponse = await people.people.get({
       resourceName: 'people/me',
       personFields: 'names,emailAddresses,photos',

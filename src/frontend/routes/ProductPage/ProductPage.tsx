@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { formatMoney } from 'accounting';
 import { Box } from 'src/frontend/components/Box';
 import { Card } from 'src/frontend/components/Card';
 import { Flex } from 'src/frontend/components/Flex';
@@ -14,6 +15,11 @@ interface IProductDescriptionProps {
 
 const ProductRightPanel = styled(Box)`
   min-width: 18rem;
+`;
+
+const ProductImage = styled.img`
+  max-width: unset;
+  width: 100%;
 `;
 
 const ProductDescription = ({ description }: IProductDescriptionProps) => {
@@ -48,17 +54,33 @@ export default ({ id, finalizeLoadable }: IProductPageProps) => {
     finalizeLoadable();
   }
   log(product);
+  const amazonLink = product.amazonLink || `https://www.amazon.com/s/ref=as_li_ss_tl?k=${
+    encodeURIComponent(product.name)
+    }&i=toys-and-games&ref=nb_sb_noss_1&linkCode=ll2` +
+    '&tag=bgsearch02-20&linkId=b2314d0ee1c9f3dbaa8f19c84d281bcd&language=en_US';
   return (
     <div>
       <h1>
         {product.name}
       </h1>
       <Flex row={true} verticalAlignItems={'flex-start'} gutter={6}>
-        <Card grow={1}>
-          <img src={product.image} />
+        <Card grow={1} shrink={1} basis='auto'>
+          <ProductImage src={product.image} />
         </Card>
-        <ProductRightPanel>
-          <Card grow={3}>
+        <Box grow={0} basis={'92px'}>
+          <Flex column={true}>
+            <a href={amazonLink} rel='noopener'>
+              <Box>
+                {product.amazonPrice && formatMoney(product.amazonPrice)}
+              </Box>
+              <Box>
+                <img src={require('src/image/vendor/amazon-logo_black.jpg')} />
+              </Box>
+            </a>
+          </Flex>
+        </Box>
+        <ProductRightPanel grow={1000}>
+          <Card>
             <ProductDescription
               description={product.description}
             />
