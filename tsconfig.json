@@ -14,6 +14,7 @@
     "jsx": "react",
     "baseUrl": "./",
     "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "src/*": [
         "src/*"
