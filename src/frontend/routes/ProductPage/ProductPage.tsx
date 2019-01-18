@@ -44,6 +44,13 @@ const ProductDescription = ({ description }: IProductDescriptionProps) => {
   );
 };
 
+const ProductImageCard = styled(Card)`
+  max-width: 100%;
+  @media screen and (min-width: 890px) {
+    max-width: 50vw;
+  }
+`;
+
 export default ({ id, finalizeLoadable }: IProductPageProps) => {
   const endpoint = `${host}:${searchPort}${searchOriginPath}item/${id}`;
 
@@ -64,9 +71,9 @@ export default ({ id, finalizeLoadable }: IProductPageProps) => {
         {product.name}
       </h1>
       <Flex row={true} verticalAlignItems={'flex-start'} gutter={6}>
-        <Card grow={1} shrink={1} basis='auto'>
+        <ProductImageCard grow={1} shrink={1} basis='auto'>
           <ProductImage src={product.image} />
-        </Card>
+        </ProductImageCard>
         <Box grow={0} basis={'92px'}>
           <Flex column={true}>
             <a href={amazonLink} rel='noopener'>
