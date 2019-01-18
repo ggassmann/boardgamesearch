@@ -98,6 +98,7 @@ export const App = () => {
   });
 
   const globalStore = GlobalStoreInstance.useStore();
+  GlobalStoreInstance.populateAccount();
 
   return (
     <>

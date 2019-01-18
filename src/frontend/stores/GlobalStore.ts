@@ -31,6 +31,7 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
       avatar: undefined,
       loggedIn: false,
       loggedOut: true,
+      loggingIn: false,
     });
   }
 
@@ -47,6 +48,7 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
             avatar: result.user.avatar,
             loggedIn: true,
             loggedOut: false,
+            loggingIn: false,
           });
         } else {
           throw result;
@@ -55,7 +57,7 @@ export class GlobalStore extends Container<IGlobalStoreStateProps> {
         this.logout();
       }
     }
-    if (!sessionKey && !this.state.loggedOut) {
+    if (!sessionKey && !this.state.loggedOut && !this.state.loggingIn) {
       this.logout();
     }
   }

@@ -16,13 +16,17 @@ export const GoogleSignInCallback = () => {
   const code = query.code;
 
   const globalStore = GlobalStoreInstance.useStore();
+  React.useEffect(() => {
+    globalStore.setState({
+      loggingIn: true,
+    });
+  });
 
   const [codeResponse, codeResponseState] = useFetch(
     `${host}:${userPort}${userOriginPath}auth/google/validate/${encodeURIComponent(code)}`,
     undefined,
   );
   const [sessionKey, setSessionKey] = useCookie('sessionKey');
-  log('Rendered sign in callback', sessionKey, codeResponse);
   if (codeResponseState === FETCH_STATUS_SUCCESS && sessionKey !== codeResponse.sessionKey) {
     setSessionKey(codeResponse.sessionKey);
   }
