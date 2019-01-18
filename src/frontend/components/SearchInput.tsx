@@ -79,11 +79,12 @@ export const SearchInput = ({
   setSearchInput, searchInput, setSearchFilters, searchFilters, searchFacets,
 }: ISearchInputProps) => {
   const [baseFacets, baseFacetsFetchState] = useFetch(`${host}:${searchPort}${searchOriginPath}facets`, { fields: {} });
-  const [autocompleteOptions, setAuctocompleteOptions] = useState([]);
+  const [autocompleteOptions, setAutocompleteOptions] = useState([]);
   const [stateHighlightedIndex, setStateHighlightedIndex] = useState(0);
   const [stateSuggestions, setStateSuggestions] = useState([]);
   const [stateSuggestionsHide, setStateSuggestionsHide] = useState(false);
   const [stateSearchButtonOpen, setStateSearchButtonOpen] = useState(false);
+  const [stateEnterContext, setStateEnterContext] = useState('input');
 
   const clickOutsideRef = React.useRef(null);
   const textFieldRef = React.useRef(null);
@@ -91,6 +92,7 @@ export const SearchInput = ({
   useClickOutside(clickOutsideRef, (e: MouseEvent) => {
     setStateSuggestionsHide(true);
     setStateSearchButtonOpen(false);
+    setStateEnterContext('input');
   });
 
   if (autocompleteOptions.length === 0 && baseFacetsFetchState === FETCH_STATUS_SUCCESS) {
@@ -107,7 +109,7 @@ export const SearchInput = ({
                 .map((fieldItem: string) => ({label: fieldItem, column: fieldColumn})),
           ),
       );
-      setAuctocompleteOptions(newAutocompleteOptions);
+      setAutocompleteOptions(newAutocompleteOptions);
     }
   }
 
@@ -117,6 +119,7 @@ export const SearchInput = ({
     setStateSuggestions(getSuggestions(autocompleteOptions, e));
     if (stateSuggestionsHide) {
       setStateSuggestionsHide(false);
+      setStateEnterContext('input');
     }
   };
 
@@ -128,15 +131,22 @@ export const SearchInput = ({
     }
     if (keycode(e.nativeEvent) === 'down') {
       setStateHighlightedIndex(Math.min(suggestions.length - 1, stateHighlightedIndex + 1));
+      setStateEnterContext('suggestions');
       e.preventDefault();
     }
     if (keycode(e.nativeEvent) === 'up') {
       setStateHighlightedIndex(Math.max(0, stateHighlightedIndex - 1));
+      setStateEnterContext('suggestions');
       e.preventDefault();
     }
     if (keycode(e.nativeEvent) === 'enter') {
-      const selectedSuggestion = suggestions[stateHighlightedIndex];
-      selectSuggestion(selectedSuggestion);
+      if (stateEnterContext === 'input') {
+        setStateSuggestionsHide(true);
+        setStateEnterContext('input');
+      } else {
+        const selectedSuggestion = suggestions[stateHighlightedIndex];
+        selectSuggestion(selectedSuggestion);
+      }
       e.preventDefault();
     }
   };
