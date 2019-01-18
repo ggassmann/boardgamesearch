@@ -18,6 +18,28 @@ services.forEach((service) => {
 
 const CFG = require(path.resolve(__dirname, '../../.devcfg.js'));
 
+class PM2ConfigPlugin {
+  apply(compiler) {
+    compiler.plugin('emit', (compilation, cb) => {
+      services.filter((service) => service !== 'solrdev').forEach((service) => {
+        let src = {};
+        src.apps = {
+          name: service,
+          script: `${service}.bundle.js`,
+          exec_mode: 'cluster_mode',
+          instances: 'max',
+        };
+        const config = JSON.stringify(src);
+        compilation.assets[`${service}.ecosystem.config.json`] = {
+          source: () => config,
+          size: () => config.length,
+        }
+      });
+      cb();
+    });
+  }
+}
+
 module.exports = {
   entry: Object.assign(
     {},
@@ -98,10 +120,13 @@ module.exports = {
     extensions: ['.mjs', '.js', '.json', '.ts', '.tsx']
   },
   plugins: [
-    new CleanWebpackPlugin(['public/services']),
+    new CleanWebpackPlugin(['../../public/services'], {
+      allowExternal: true,
+    }),
     new webpack.DefinePlugin({
       'CFG': JSON.stringify(CFG),
     }),
+    new PM2ConfigPlugin(),
     ...(production ? [
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
