@@ -81,6 +81,10 @@ const HeaderAvatar: StyledComponent<
   }
 `;
 
+const HeaderAccountLinkPlaceholder = styled.div`
+  width: 3.3em;
+`;
+
 const SMALL_HEADER_CUTOFF = 380;
 
 export const App = () => {
@@ -129,12 +133,14 @@ export const App = () => {
                   <>
                     <HeaderAvatar to='/user/account' src={globalStore.state.avatar}/>
                   </>
-                ||
+                || globalStore.state.loggedOut &&
                   <>
                     <HeaderAccountLink to='/user/signin'>
                       Sign&nbsp;In
                     </HeaderAccountLink>
                   </>
+                ||
+                  <HeaderAccountLinkPlaceholder/>
                 }
               </Box>
             </Flex>
