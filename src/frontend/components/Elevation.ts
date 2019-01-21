@@ -1,4 +1,4 @@
-import styled, { css } from '../styled';
+import { css } from '../styled';
 
 export const dp0 = css`
   box-shadow: none;
