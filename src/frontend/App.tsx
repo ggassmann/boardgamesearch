@@ -85,7 +85,7 @@ const HeaderAccountLinkPlaceholder = styled.div`
   width: 3.3em;
 `;
 
-const SMALL_HEADER_CUTOFF = 446;
+const SMALL_HEADER_CUTOFF = 464;
 
 export const App = () => {
   const [stateSearchInput, setStateSearchInput] = useState('');
