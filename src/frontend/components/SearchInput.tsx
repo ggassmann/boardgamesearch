@@ -122,7 +122,7 @@ export const SearchInput = ({
   };
 
   const handleHighlightKeypress = (e: SyntheticEvent) => {
-    const suggestions = getSuggestions(autocompleteOptions, searchInput);
+    const suggestions = getSuggestions(autocompleteOptions, searchStore.state.input);
     if (stateSuggestionsHide || suggestions.length === 0) {
       setStateHighlightedIndex(0);
       return;
