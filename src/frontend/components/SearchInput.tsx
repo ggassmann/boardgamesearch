@@ -8,7 +8,6 @@ import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { useClickOutside } from 'src/frontend/lib/useClickOutside';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
 import { Search } from 'styled-icons/fa-solid/Search';
-import { ISearchFacet } from '../lib/ISearchFacet';
 import { FETCH_STATUS_SUCCESS, useFetch } from '../lib/useFetch';
 import { SearchStore } from '../stores/SearchStore';
 import styled from '../styled';
