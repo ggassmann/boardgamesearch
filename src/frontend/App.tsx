@@ -39,7 +39,7 @@ const HeaderLink: StyledComponent<
   @media screen and (max-width: ${({ hideAfter }: IHeaderLinkProps) => hideAfter}px) {
     display: none;
   }
-  @media screen and (min-width: ${({ hideBefore }: IHeaderLinkProps) => hideBefore}px) {
+  @media screen and (min-width: ${({ hideBefore }: IHeaderLinkProps) => hideBefore + 1}px) {
     display: none;
   }
 `;
@@ -85,7 +85,7 @@ const HeaderAccountLinkPlaceholder = styled.div`
   width: 3.3em;
 `;
 
-const SMALL_HEADER_CUTOFF = 380;
+const SMALL_HEADER_CUTOFF = 464;
 
 export const App = () => {
   const [stateSearchInput, setStateSearchInput] = useState('');
