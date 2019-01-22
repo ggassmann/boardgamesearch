@@ -26,7 +26,7 @@ const solrLimiter = new Bottleneck({
   maxConcurrent: 1,
   minTime: 5000,
 });
-const thingsPerScrapeRequest = 250;
+const thingsPerScrapeRequest = 225;
 const thingsPerSolrRequest = 500;
 
 interface IPollValueMap {
@@ -92,7 +92,7 @@ setInterval(async () => {
         const sp = new ScrapeProgress();
         sp.index = thing.id;
         sp.name = 'boardgamegeek',
-        sp.status = ScrapeStatus.finished;
+          sp.status = ScrapeStatus.finished;
         (await con()).manager.save(sp);
       });
       log(`SOLR Queue Length: ${solrQueue.length}`);
@@ -116,7 +116,7 @@ setInterval(async () => {
       .take(1)
       .orderBy('scrape_progress.index', 'DESC')
       .getOne()
-    ) || {index: 0}).index;
+    ) || { index: 0 }).index;
 
   log(`Starting @ ${startingIndex}`);
 
@@ -169,7 +169,7 @@ setInterval(async () => {
           const sp = new ScrapeProgress();
           sp.index = searchedId;
           sp.name = 'boardgamegeek',
-          sp.status = ScrapeStatus.doesNotExist;
+            sp.status = ScrapeStatus.doesNotExist;
           (await con()).manager.save(sp);
         }
       });
