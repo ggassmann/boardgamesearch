@@ -20,7 +20,7 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
   devtool: production ? 'source-map' : 'inline-source-map',
   devServer: {
     contentBase: './public',
-    hot: false//true
+    hot: true
   },
   optimization: {
     splitChunks: {
@@ -106,9 +106,7 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
       defaultAttribute: 'defer',
       preload: /.+/g,
     }),
-    /*
-    new webpack.HotModuleReplacementPlugin()
-    */
+    new webpack.HotModuleReplacementPlugin(),
     new webpack.DefinePlugin({
       'CFG': JSON.stringify(CFG),
     }),
@@ -119,7 +117,7 @@ module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.co
     ...(analyze ? [new BundleAnalyzerPlugin()] : []),
   ],
   output: {
-    filename: '[name].[chunkhash].bundle.js',
+    filename: '[name].[hash:6].bundle.js',
     path: path.resolve(__dirname, 'public/frontend/'),
     publicPath: '/',
   }
