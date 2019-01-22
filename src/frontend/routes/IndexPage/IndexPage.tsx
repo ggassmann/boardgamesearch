@@ -4,15 +4,16 @@ import { ProductList } from 'src/frontend/components/ProductList';
 import { SquarePageLoader } from 'src/frontend/components/SquareLoader';
 import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { FETCH_STATUS_FETCHING, FETCH_STATUS_SUCCESS } from 'src/frontend/lib/useFetch';
+import { SearchStore } from 'src/frontend/stores/SearchStore';
 
 interface IIndexPageProps {
   products: any;
   productsStatus: number;
-  headerSearchFilters: ISearchFilter[];
+  searchStore: SearchStore;
   finalizeLoadable: () => void;
 }
 
-export default ({ products, productsStatus, headerSearchFilters, finalizeLoadable}: IIndexPageProps) => {
+export default ({searchStore, products, productsStatus, finalizeLoadable}: IIndexPageProps) => {
   const [hasCompletedFirstFetch, setHasCompletedFirstFetch] = React.useState(false);
   if (!hasCompletedFirstFetch && productsStatus === FETCH_STATUS_SUCCESS) {
     finalizeLoadable();
@@ -20,7 +21,7 @@ export default ({ products, productsStatus, headerSearchFilters, finalizeLoadabl
   }
   return (
     <>
-      <FiltersView searchFilters={headerSearchFilters}/>
+      <FiltersView searchStore={searchStore}/>
       {productsStatus === FETCH_STATUS_SUCCESS &&
         <ProductList products={products}/>
       }

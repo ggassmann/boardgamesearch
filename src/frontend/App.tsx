@@ -16,6 +16,7 @@ import { IndexPageLoadable } from './routes/IndexPage/IndexPageLoadable';
 import { AccountPageLoadable } from './routes/User/Account/AccountPageLoadable';
 import { SignInPageLoadable } from './routes/User/SignInPage/SignInPageLoadable';
 import { GlobalStoreInstance } from './stores/GlobalStore';
+import { SearchStore } from './stores/SearchStore';
 import styled, { css } from './styled';
 
 interface IHeaderLinkProps {
@@ -87,17 +88,16 @@ const HeaderAccountLinkPlaceholder = styled.div`
 
 const SMALL_HEADER_CUTOFF = 464;
 
-export const App = () => {
-  const [stateSearchInput, setStateSearchInput] = useState('');
-  const [stateSearchFilters, setStateSearchFilters] = useState([]);
-  const [stateSearchFacets, setStateSearchFacets] = useState([]);
+const HeaderSearchStore = new SearchStore();
 
+export const App = () => {
   const endpoint = `${host}:${searchPort}${searchOriginPath}search`;
+  const headerSearchStore = HeaderSearchStore.useStore();
 
   const [products, productsStatus] = useFetch(endpoint, { docs: [], explain: [] }, {
     body: {
-      query: stateSearchInput,
-      filters: stateSearchFilters,
+      query: headerSearchStore.state.input,
+      filters: headerSearchStore.state.filters,
     },
   });
 
@@ -121,11 +121,7 @@ export const App = () => {
               </Typeography>
               <Box>
                 <SearchInput
-                  searchInput={stateSearchInput}
-                  setSearchInput={setStateSearchInput}
-                  searchFilters={stateSearchFilters}
-                  setSearchFilters={setStateSearchFilters}
-                  searchFacets={stateSearchFacets}
+                  searchStore={HeaderSearchStore}
                 />
               </Box>
               <Box grow={0}>
@@ -153,7 +149,7 @@ export const App = () => {
                 <IndexPageLoadable
                   products={products}
                   productsStatus={productsStatus}
-                  headerSearchFilters={stateSearchFilters}
+                  searchStore={HeaderSearchStore}
                 />
               )}
             />

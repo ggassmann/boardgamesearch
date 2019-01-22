@@ -10,15 +10,12 @@ import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins'
 import { Search } from 'styled-icons/fa-solid/Search';
 import { ISearchFacet } from '../lib/ISearchFacet';
 import { FETCH_STATUS_SUCCESS, useFetch } from '../lib/useFetch';
+import { SearchStore } from '../stores/SearchStore';
 import styled from '../styled';
 import { TextField, TextFieldButton, TextFieldInput, TextFieldSuggestion, TextFieldSuggestions } from './InputField';
 
 interface ISearchInputProps {
-  searchInput: string;
-  setSearchInput: (searchInput: string) => void;
-  searchFilters: ISearchFilter[];
-  setSearchFilters: (searchFilters: ISearchFilter[]) => void;
-  searchFacets: ISearchFacet[];
+  searchStore: SearchStore;
 }
 
 interface ISearchSuggestionProps {
@@ -76,7 +73,7 @@ const getSuggestions = (suggestions: ISearchSuggestion[], value: string): ISearc
 };
 
 export const SearchInput = ({
-  setSearchInput, searchInput, setSearchFilters, searchFilters, searchFacets,
+  searchStore,
 }: ISearchInputProps) => {
   const [baseFacets, baseFacetsFetchState] = useFetch(`${host}:${searchPort}${searchOriginPath}facets`, { fields: {} });
   const [autocompleteOptions, setAutocompleteOptions] = useState([]);
@@ -114,7 +111,9 @@ export const SearchInput = ({
   }
 
   const setInput = (e: string) => {
-    setSearchInput(e);
+    searchStore.setState({
+      input: e,
+    });
     setStateHighlightedIndex(0);
     setStateSuggestions(getSuggestions(autocompleteOptions, e));
     if (stateSuggestionsHide) {
@@ -157,10 +156,12 @@ export const SearchInput = ({
       column: suggestion.column,
       value: suggestion.label,
     };
-    setSearchFilters([
-      ...searchFilters,
-      selectedFilter,
-    ]);
+    searchStore.setState({
+      filters: [
+        ...searchStore.state.filters,
+        selectedFilter,
+      ],
+    });
     setInput('');
     setStateSuggestionsHide(true);
   };
@@ -185,7 +186,7 @@ export const SearchInput = ({
       <TextFieldInput
         id='search-query-header'
         type='text'
-        value={searchInput}
+        value={searchStore.state.input}
         placeholder='Search'
         onChange={eventTargetValue(setInput)}
         onKeyDown={handleHighlightKeypress}
@@ -193,7 +194,7 @@ export const SearchInput = ({
         onBlur={() => setTimeout(() => setStateSuggestionsHide(true), 100)}
         ref={textFieldRef}
       />
-      <TextFieldButton href={`/search/${searchInput}`} onClick={onSearchButtonClick}>
+      <TextFieldButton href={`/search/${searchStore.state.input}`} onClick={onSearchButtonClick}>
         <Search size={'1.2rem'}/>
         <SearchButtonLabel>
           Search

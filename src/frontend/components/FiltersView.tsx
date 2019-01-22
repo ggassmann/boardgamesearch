@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Card } from 'src/frontend/components/Card';
-import { ISearchFilter } from '../lib/ISearchFilter';
+import { SearchStore } from '../stores/SearchStore';
 import styled from '../styled';
 import { dp2 } from './Elevation';
 
 interface IFiltersViewProps {
-  searchFilters: ISearchFilter[];
+  searchStore: SearchStore;
 }
 
 const FiltersViewContainer = styled.div`
@@ -39,16 +38,16 @@ const FilterOptionRemoveButton = styled.button`
   top: ${FilterOptionHeight * 0.375}em;
 `;
 
-export const FiltersView = ({searchFilters}: IFiltersViewProps) => {
-  if (searchFilters.length < 1) {
+export const FiltersView = ({searchStore}: IFiltersViewProps) => {
+  if (searchStore.state.filters.length < 1) {
     return null;
   }
   return (
     <FiltersViewContainer>
-      {searchFilters.map((filter) => (
+      {searchStore.state.filters.map((filter) => (
         <FilterOption>
           {filter.column}: {filter.label}
-          <FilterOptionRemoveButton>
+          <FilterOptionRemoveButton onClick={() => searchStore.removeFilter(filter)}>
             x
           </FilterOptionRemoveButton>
         </FilterOption>
