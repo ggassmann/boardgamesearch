@@ -28,18 +28,20 @@ const ProductDescription = ({ description }: IProductDescriptionProps) => {
   return (
     <>
       {
-        outerSegments.map((segment, segmentIndex) => (
-          <React.Fragment key={segmentIndex}>
-            <p>
-              {segment.trim().split('\n').map((innerSegment, innerSegmentIndex) => (
-                <React.Fragment key={innerSegmentIndex}>
-                  {innerSegment}
-                  {innerSegmentIndex !== outerSegments.length && <br /> || ''}
-                </React.Fragment>
-              ))}
-            </p>
-          </React.Fragment>
-        ))
+        outerSegments
+          .map((segment) => segment.trim().split('\n'))
+          .map((segment, segmentIndex) => (
+            <React.Fragment key={segmentIndex}>
+              <p>
+                {segment.map((innerSegment, innerSegmentIndex) => (
+                  <React.Fragment key={innerSegmentIndex}>
+                    {innerSegment.trim()}
+                    {innerSegmentIndex !== segment.length - 1 && <br /> || ''}
+                  </React.Fragment>
+                ))}
+              </p>
+            </React.Fragment>
+          ))
       }
     </>
   );
