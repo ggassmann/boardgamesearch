@@ -5,8 +5,10 @@ import { hot } from 'react-hot-loader';
 import { Box } from 'src/frontend/components/Box';
 import { Card } from 'src/frontend/components/Card';
 import { Flex } from 'src/frontend/components/Flex';
+import { ProductList } from 'src/frontend/components/ProductList';
 import { FETCH_STATUS_FETCHING, useFetch } from 'src/frontend/lib/useFetch';
 import styled from 'src/frontend/styled';
+import { IThing } from 'src/lib/IThing';
 import { log } from 'src/lib/log';
 import { host, searchOriginPath, searchPort } from 'src/services/serviceorigins';
 
@@ -107,13 +109,15 @@ const ProductFacet = ({label, productKey, contents}: IProductProducersGroupProps
 export default hot(module)(({ id, finalizeLoadable }: IProductPageProps) => {
   const endpoint = `${host}:${searchPort}${searchOriginPath}item/${id}`;
 
-  const [product, productStatus] = useFetch(endpoint, null);
-  if (!product || productStatus === FETCH_STATUS_FETCHING) {
+  const [productResults, productStatus] = useFetch(endpoint, null);
+  if (!productResults || productStatus === FETCH_STATUS_FETCHING) {
     return null;
   } else {
     finalizeLoadable();
   }
-  log(product);
+  const product: IThing = productResults.item;
+  const relatedItems: IThing[] = productResults.relatedItems;
+  log(product, relatedItems);
   const amazonLink = product.amazonLink || `https://www.amazon.com/s/ref=as_li_ss_tl?k=${
     encodeURIComponent(product.name)
     }&i=toys-and-games&ref=nb_sb_noss_1&linkCode=ll2` +
@@ -153,6 +157,10 @@ export default hot(module)(({ id, finalizeLoadable }: IProductPageProps) => {
           <ProductFacet label='Categories' productKey='categories' contents={product.categories}/>
         </ProductFacetGroupCard>
       </Flex>
+      <Card>
+        <h4>You may also like:</h4>
+        <ProductList products={{docs: relatedItems}}/>
+      </Card>
     </div>
   );
 });

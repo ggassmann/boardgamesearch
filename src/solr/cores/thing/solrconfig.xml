@@ -692,18 +692,6 @@
       <int name="rows">10</int>
     </lst>
   </requestHandler>
-    <requestHandler name="/morelikethis" class="solr.MoreLikeThisHandler">
-    <lst name="defaults">
-      <int name="rows">6</int>
-      <str name="df">id</str>
-      <str name="mlt">true</str>
-      <str name="fl">id,score,name</str>
-      <str name="mlt.fl">families,mechanics,genres,themes,suggestedWeight</str>
-      <str name="mlt.qf">families^14 mechanics^13 genres^12 themes^10 suggestedWeight^9</str>
-      <int name="mlt.mintf">1</int>
-      <int name="mlt.mindf">1</int>
-    </lst>
-  </requestHandler>
 
   <!-- A request handler that returns indented JSON by default -->
   <requestHandler name="/query" class="solr.SearchHandler">
