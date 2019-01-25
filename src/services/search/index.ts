@@ -87,32 +87,32 @@ const getMoreLikeThis = async (item: IThing): Promise<IThing[]> => {
     [
       'q.alt=*.*',
       `fq=NOT _id:${item._id}`,
-      'fl=id,name,thumbnail,suggestedRating',
+      'fq=type:boardgame',
+      'fl=id,name,thumbnail,suggestedRating,mechanics,score',
       'defType=dismax',
-      'bf=suggestedRating^15',
+      'bf=suggestedRating^4',
       ...[
-        ['type', 1000],
-        ['families', 14],
-        ['mechanics', 13],
-        ['genres', 12],
-        ['themes', 10],
-        ['suggestedWeight', 5],
+        ['families', 5],
+        ['mechanics', 5],
+        ['categories', 5],
       ].map((mltSet) => {
         let query: any = item[mltSet[0]];
         if (!query) {
           return undefined;
         }
-        if (item[mltSet[0]].join) {
-          log(item[mltSet[0]]);
-          query = `${item[mltSet[0]].join('" OR "')}`;
-        }
-        return `bq=${mltSet[0]}:\"${query}\"^${mltSet[1]}`;
+        query = item[mltSet[0]]
+          .map((x: any) =>
+            x
+              .toString()
+              .replace(/[\n\(\):']/g, ' '),
+          )
+          .join('" OR "');
+        return `bq=${mltSet[0]}:\"${encodeURIComponent(query)}\"^${mltSet[1]}`;
       }).filter((x) => !(!x)),
     ].join('&'),
   ].join('');
-  log(solrQuery);
   try {
-    const response = await fetch(solrQuery);
+    const response: Response = await fetch(solrQuery);
     const data = await response.json();
     return data.response.docs;
   } catch (e) {
@@ -132,13 +132,14 @@ app.get(`${searchOriginPath}item/:id`, async (req, res) => {
     const response = await fetch(solrQuery);
     const data = await response.json();
     const item = data.response.docs[0];
+    const relatedItems = await getMoreLikeThis(item);
     res.send({
       item,
-      relatedItems: await getMoreLikeThis(item),
+      relatedItems,
     });
   } catch (e) {
     res.send(500);
-    return;
+    throw e;
   }
 });
 
