@@ -12,7 +12,7 @@ const analyze = process.env.ANALYZE === 'true';
 
 const CFG = require('./.devcfg.js');
 
-module.exports = { //TODO: Re-enable hmr when useEffect fixed. https://github.com/gaearon/react-hot-loader/issues/1088
+module.exports = {
   entry: {
     app: './src/frontend/index.tsx'
   },

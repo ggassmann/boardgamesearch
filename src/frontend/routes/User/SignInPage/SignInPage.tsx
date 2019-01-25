@@ -1,11 +1,11 @@
 import * as React from 'react';
-import Helmet from 'react-helmet';
+import { hot } from 'react-hot-loader';
 import { Route, Switch } from 'react-router';
+
 import { Section } from 'src/frontend/components/Section';
 import { ILoadablePageProps } from 'src/frontend/lib/ILoadablePageProps';
 import { useCookie } from 'src/frontend/lib/useCookie';
 import { FETCH_STATUS_SUCCESS, useFetch } from 'src/frontend/lib/useFetch';
-import { log } from 'src/lib/log';
 import { host, userOriginPath, userPort } from 'src/services/serviceorigins';
 import { GoogleSignInCallback } from './callbacks/GoogleSignInCallback';
 
@@ -32,7 +32,7 @@ const SignInPageContent = ({ finalizeLoadable }: ILoadablePageProps) => {
   );
 };
 
-export default ({ finalizeLoadable }: ILoadablePageProps) => {
+export default hot(module)(({ finalizeLoadable }: ILoadablePageProps) => {
   return (
     <div>
       <Switch>
@@ -53,4 +53,4 @@ export default ({ finalizeLoadable }: ILoadablePageProps) => {
       </Switch>
     </div>
   );
-};
+});

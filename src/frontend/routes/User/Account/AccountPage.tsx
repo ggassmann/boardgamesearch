@@ -1,16 +1,15 @@
 import * as React from 'react';
+import {hot} from 'react-hot-loader';
 import { Redirect } from 'react-router';
+
 import { Section } from 'src/frontend/components/Section';
-import { useCookie } from 'src/frontend/lib/useCookie';
 import { GlobalStoreInstance } from 'src/frontend/stores/GlobalStore';
-import { log } from 'src/lib/log';
-import { host, userOriginPath, userPort } from 'src/services/serviceorigins';
 
 interface IAccountPageProps {
   finalizeLoadable: () => void;
 }
 
-export default ({finalizeLoadable}: IProductPageProps) => {
+export default hot(module)(({finalizeLoadable}: IProductPageProps) => {
   const globalStore = GlobalStoreInstance.useStore();
   finalizeLoadable();
 
@@ -30,4 +29,4 @@ export default ({finalizeLoadable}: IProductPageProps) => {
       </>
     </Section>
   );
-};
+});

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { hot } from 'react-hot-loader/root';
 import { BrowserRouter, Link, Route, Switch } from 'react-router-dom';
 import { StyledComponent } from 'styled-components';
 
@@ -90,7 +91,7 @@ const SMALL_HEADER_CUTOFF = 464;
 
 const HeaderSearchStore = new SearchStore();
 
-export const App = () => {
+export const App = hot(() => {
   const endpoint = `${host}:${searchPort}${searchOriginPath}search`;
   const headerSearchStore = HeaderSearchStore.useStore();
 
@@ -171,4 +172,4 @@ export const App = () => {
       </BrowserRouter>
     </>
   );
-};
+});

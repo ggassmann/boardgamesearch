@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { hot } from 'react-hot-loader';
+
 import { FiltersView } from 'src/frontend/components/FiltersView';
 import { ProductList } from 'src/frontend/components/ProductList';
 import { SquarePageLoader } from 'src/frontend/components/SquareLoader';
-import { ISearchFilter } from 'src/frontend/lib/ISearchFilter';
 import { FETCH_STATUS_FETCHING, FETCH_STATUS_SUCCESS } from 'src/frontend/lib/useFetch';
 import { SearchStore } from 'src/frontend/stores/SearchStore';
 
@@ -13,7 +14,7 @@ interface IIndexPageProps {
   finalizeLoadable: () => void;
 }
 
-export default ({searchStore, products, productsStatus, finalizeLoadable}: IIndexPageProps) => {
+export default hot(module)(({searchStore, products, productsStatus, finalizeLoadable}: IIndexPageProps) => {
   const [hasCompletedFirstFetch, setHasCompletedFirstFetch] = React.useState(false);
   if (!hasCompletedFirstFetch && productsStatus === FETCH_STATUS_SUCCESS) {
     finalizeLoadable();
@@ -30,4 +31,4 @@ export default ({searchStore, products, productsStatus, finalizeLoadable}: IInde
       }
     </>
   );
-};
+});

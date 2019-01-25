@@ -1,6 +1,7 @@
-import * as React from 'react';
-
 import { formatMoney } from 'accounting';
+import * as React from 'react';
+import { hot } from 'react-hot-loader';
+
 import { Box } from 'src/frontend/components/Box';
 import { Card } from 'src/frontend/components/Card';
 import { Flex } from 'src/frontend/components/Flex';
@@ -51,7 +52,7 @@ const ProductImageCard = styled(Card)`
   }
 `;
 
-export default ({ id, finalizeLoadable }: IProductPageProps) => {
+export default hot(module)(({ id, finalizeLoadable }: IProductPageProps) => {
   const endpoint = `${host}:${searchPort}${searchOriginPath}item/${id}`;
 
   const [product, productStatus] = useFetch(endpoint, null);
@@ -96,4 +97,4 @@ export default ({ id, finalizeLoadable }: IProductPageProps) => {
       </Flex>
     </div>
   );
-};
+});
