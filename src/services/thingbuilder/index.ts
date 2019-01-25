@@ -57,6 +57,9 @@ log('Max Page', MAX_PAGE);
       body: JSON.stringify(things),
     });
     const updateData = await updateResponse.json();
+    if (updateData.responseHeader.status !== 0) {
+      throw updateData;
+    }
     const commitResponse = await fetch(`${solrOrigin}thing/update`, {
       method: 'POST',
       headers: {
@@ -64,10 +67,13 @@ log('Max Page', MAX_PAGE);
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        commit: {commitWithin: 1},
+        commit: {},
       }),
     });
     const commitData = await commitResponse.json();
+    if (commitData.responseHeader.status !== 0) {
+      throw commitData;
+    }
     const newEntities: ScrapeProgress[] = [];
     things.forEach(async (thing: IBGGThing) => {
       const sp = new ScrapeProgress();
@@ -101,11 +107,7 @@ log('Max Page', MAX_PAGE);
         .getMany()
       ).map((scrapeProgress: ScrapeProgress) => scrapeProgress.index);
 
-      log(matchingIds.length, bggIds.length);
-
       bggIds = bggIds.filter((id) => matchingIds.indexOf(id) === -1);
-
-      log(bggIds.length);
 
       if (bggIds.length > 0) {
         const amazonThings = await getAmazonThingsByBGGId(bggIds);
@@ -174,10 +176,10 @@ log('Max Page', MAX_PAGE);
         .createQueryBuilder('scrape_progress')
         .where("scrape_progress.name = 'thing'")
         .getCount()
-      ) / PAGE_SIZE,
+      ) / PAGE_SIZE - 1,
     );
 
-  if (startingIndex > MAX_PAGE) {
+  if (startingIndex > MAX_PAGE || startingIndex < 0) {
     startingIndex = 0;
   }
 
