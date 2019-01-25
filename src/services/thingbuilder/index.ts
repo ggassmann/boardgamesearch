@@ -64,7 +64,7 @@ log('Max Page', MAX_PAGE);
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        commit: {},
+        commit: {commitWithin: 1},
       }),
     });
     const commitData = await commitResponse.json();
@@ -83,11 +83,14 @@ log('Max Page', MAX_PAGE);
       .where(`index IN (${things.map((thing) => thing.id).join(',')})`)
       .execute();
     */
+    log('Commited', newEntities.length, '[', newEntities[0].index, '-', newEntities[newEntities.length - 1].index, ']');
     (await con()).manager.save(newEntities);
   };
   const processPage = async (page: number) => {
     const bggThings: IBGGThing[] = await getPageOfBGGThings(page);
-    let bggIds = bggThings.map((bggThing) => bggThing.id);
+    let bggIds = bggThings.map((bggThing) => parseInt(bggThing.id.toString(), 10));
+
+    log('Processing page', page);
 
     if (bggIds.length > 0) {
       const matchingIds = (await (await con()).manager
@@ -98,7 +101,11 @@ log('Max Page', MAX_PAGE);
         .getMany()
       ).map((scrapeProgress: ScrapeProgress) => scrapeProgress.index);
 
+      log(matchingIds.length, bggIds.length);
+
       bggIds = bggIds.filter((id) => matchingIds.indexOf(id) === -1);
+
+      log(bggIds.length);
 
       if (bggIds.length > 0) {
         const amazonThings = await getAmazonThingsByBGGId(bggIds);
@@ -147,27 +154,27 @@ log('Max Page', MAX_PAGE);
             amazonLink: amazonThing.link,
           };
         });
+
         await submitThings(things);
       }
-    }
-
-    if (page >= MAX_PAGE) {
-      processPage(0);
+      if (page >= MAX_PAGE) {
+        processPage(0);
+      } else {
+        processPage(page + 1);
+      }
     } else {
-      processPage(page + 1);
+      setTimeout(() => processPage(page - 1), 5000);
     }
   };
 
   let startingIndex =
     Math.floor(
-      ((await (await con())
+      (await (await con())
         .getRepository(ScrapeProgress)
         .createQueryBuilder('scrape_progress')
         .where("scrape_progress.name = 'thing'")
-        .take(1)
-        .orderBy('scrape_progress.index', 'DESC')
-        .getOne()
-      ) || {index: 0}).index / PAGE_SIZE,
+        .getCount()
+      ) / PAGE_SIZE,
     );
 
   if (startingIndex > MAX_PAGE) {
