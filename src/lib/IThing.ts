@@ -37,4 +37,6 @@ export interface IThing {
 
   amazonPrice?: number;
   amazonLink?: string;
+
+  [index: string]: any;
 }
