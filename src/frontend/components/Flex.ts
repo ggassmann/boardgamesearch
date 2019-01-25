@@ -19,6 +19,9 @@ export const Flex = styled.div`
   `};
   ${({ verticalAlignItems }: IFlexProps) => verticalAlignItems && css`
     align-items: ${verticalAlignItems}
+    ${verticalAlignItems === 'stretch' && css`
+      height: 100%;
+    `}
   ` || ''};
   &>* {
     ${({ gutter }: IFlexProps) => gutter > 0 && css`
