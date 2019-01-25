@@ -30,6 +30,11 @@ export const authMiddleware = (next: (req: ISessionRequest, res: core.Response, 
         },
       });
 
+    if(!session) {
+      fail();
+      return;
+    }
+
     req.session = session;
 
     next(req, res, outerNext);
