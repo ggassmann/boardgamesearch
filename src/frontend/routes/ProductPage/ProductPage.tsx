@@ -54,6 +54,56 @@ const ProductImageCard = styled(Card)`
   }
 `;
 
+const ProductAmazonLink = styled.a`
+  max-height: 64px;
+  margin-top: 1em;
+  display: block;
+  img {
+    max-height: 64px;
+  }
+`;
+
+interface IProductProducersGroupProps {
+  label: string;
+  productKey: string;
+  contents: string[];
+}
+
+const ProductFacetGroupCard = styled(Card)`
+  flex: 1;
+  flex-basis: 18em;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ProductFacetList = styled.ul`
+  list-style: none;
+  margin: 0;
+`;
+
+const ProductFacetGroupHeader = styled.h4`
+  margin-bottom: 0.25em;
+`;
+
+const ProductFacet = ({label, productKey, contents}: IProductProducersGroupProps) => {
+  return (
+    <>
+      {contents && contents.length > 0 &&
+        <>
+          <ProductFacetGroupHeader>{label}</ProductFacetGroupHeader>
+          <ProductFacetList>
+            {contents.map((content) => (
+              <li key={content}>
+                {content}
+              </li>
+            ))}
+          </ProductFacetList>
+        </>
+      }
+    </>
+  );
+};
+
 export default hot(module)(({ id, finalizeLoadable }: IProductPageProps) => {
   const endpoint = `${host}:${searchPort}${searchOriginPath}item/${id}`;
 
@@ -74,20 +124,14 @@ export default hot(module)(({ id, finalizeLoadable }: IProductPageProps) => {
         {product.name}
       </h1>
       <Flex row={true} verticalAlignItems={'flex-start'} gutter={6}>
-        <ProductImageCard grow={1} shrink={1} basis='auto'>
-          <ProductImage src={product.image} />
-        </ProductImageCard>
-        <Box grow={0} basis={'92px'}>
-          <Flex column={true}>
-            <a href={amazonLink} rel='noopener'>
-              <Box>
-                {product.amazonPrice && formatMoney(product.amazonPrice)}
-              </Box>
-              <Box>
-                <img src={require('src/image/vendor/amazon-logo_black.jpg')} />
-              </Box>
-            </a>
-          </Flex>
+        <Box grow={1} shrink={1} basis='auto'>
+          <ProductImageCard>
+            <ProductImage src={product.image} />
+          </ProductImageCard>
+          <ProductAmazonLink href={amazonLink} rel='noopener'>
+            {product.amazonPrice && formatMoney(product.amazonPrice)}
+            <img src={require('src/image/vendor/amazon-logo_black.jpg')} />
+          </ProductAmazonLink>
         </Box>
         <ProductRightPanel grow={1000}>
           <Card>
@@ -96,6 +140,18 @@ export default hot(module)(({ id, finalizeLoadable }: IProductPageProps) => {
             />
           </Card>
         </ProductRightPanel>
+      </Flex>
+      <Flex row={true} verticalAlignItems={'stretch'} gutter={6}>
+        <ProductFacetGroupCard>
+          <ProductFacet label='Artists' productKey='artists' contents={product.artists}/>
+          <ProductFacet label='Designers' productKey='designers' contents={product.designers}/>
+          <ProductFacet label='Publishers' productKey='publishers' contents={product.publishers}/>
+        </ProductFacetGroupCard>
+        <ProductFacetGroupCard>
+          <ProductFacet label='Mechanics' productKey='mechanics' contents={product.mechanics}/>
+          <ProductFacet label='Families' productKey='families' contents={product.families}/>
+          <ProductFacet label='Categories' productKey='categories' contents={product.categories}/>
+        </ProductFacetGroupCard>
       </Flex>
     </div>
   );
