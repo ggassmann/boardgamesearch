@@ -1,6 +1,7 @@
 export interface IThing {
   type?: string;
-  id?: number;
+  id?: number | string;
+  _id?: number | null;
   thumbnail?: string;
   image?: string;
   name?: string;
