@@ -12,7 +12,7 @@ import { origin as solrOrigin } from 'src/services/solr';
 
 const app = express();
 
-app.use(cors({credentials: true, origin: 'http://localhost:8080'}));
+app.use(cors({ credentials: true, origin: 'http://localhost:8080' }));
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => res.send('Hello World!'));
@@ -88,6 +88,8 @@ const getMoreLikeThis = async (item: IThing): Promise<IThing[]> => {
       'q.alt=*.*',
       `fq=NOT _id:${item._id}`,
       'fq=type:boardgame',
+      'fq=thumbnail:[* TO *]',
+      'fq=suggestedRating:[0.001 TO *]',
       'fl=id,name,thumbnail,suggestedRating,mechanics,score',
       'defType=dismax',
       'bf=suggestedRating^4',
